@@ -1,0 +1,211 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Api_Demo</name>
+    </assembly>
+    <members>
+        <member name="T:WebApplication2.Controllers.HomeController">
+            <summary>
+            基础数据
+            </summary>
+        </member>
+        <member name="T:WebApplication2.Controllers.JWTApiController">
+            <summary>
+            基类控制器
+            </summary>
+        </member>
+        <member name="P:WebApplication2.Controllers.JWTApiController.UserID">
+            <summary>
+            用户ID
+            </summary>
+        </member>
+        <member name="P:WebApplication2.Controllers.JWTApiController.Passport">
+            <summary>
+            用户授权信息
+            </summary>
+        </member>
+        <member name="M:WebApplication2.Controllers.JWTApiController.OnActionExecuting(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext)">
+            <summary>
+            控制器执行
+            </summary>
+            <param name="context"></param>
+            <param name="next"></param>
+            <returns></returns>
+        </member>
+        <member name="T:WebApplication2.Controllers.UserController">
+            <summary>
+            用户信息
+            </summary>
+        </member>
+        <member name="T:WebApplication2.JWTClaimTypeConst">
+            <summary>
+            JWT  Claim Type Const
+            </summary>
+        </member>
+        <member name="F:WebApplication2.JWTClaimTypeConst.UserID">
+            <summary>
+            UserID标识
+            </summary>
+        </member>
+        <member name="F:WebApplication2.JWTClaimTypeConst.UserName">
+            <summary>
+            UserName标识
+            </summary>
+        </member>
+        <member name="F:WebApplication2.JWTClaimTypeConst.HeadImage">
+            <summary>
+            HeadImage标识
+            </summary>
+        </member>
+        <member name="T:WebApplication2.JWTContext">
+            <summary>
+            JWT-Context
+            </summary>
+        </member>
+        <member name="M:WebApplication2.JWTContext.GetToken(System.Security.Claims.Claim[],WebApplication2.JWTSetting)">
+             <summary>
+            获取JWT-Token
+             </summary>
+             <param name="claims"></param>
+             <param name="setting"></param>
+             <returns></returns>
+        </member>
+        <member name="T:WebApplication2.JWTSetting">
+            <summary>
+            JWT-配置
+            </summary>
+        </member>
+        <member name="P:WebApplication2.JWTSetting.Issuer">
+            <summary>
+            授权方
+            </summary>
+        </member>
+        <member name="P:WebApplication2.JWTSetting.Audience">
+            <summary>
+            被授权方
+            </summary>
+        </member>
+        <member name="P:WebApplication2.JWTSetting.SecurityKey">
+            <summary>
+            秘钥
+            </summary>
+        </member>
+        <member name="P:WebApplication2.JWTSetting.Expires">
+            <summary>
+            单位:分钟
+            </summary>
+        </member>
+        <member name="T:WebApplication2.ServiceCollectionExtensions">
+            <summary>
+            服务配置
+            </summary>
+        </member>
+        <member name="M:WebApplication2.ServiceCollectionExtensions.AddJWTAuthentication(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+             <summary>
+            添加JWT
+             </summary>
+             <param name="services"></param>
+        </member>
+        <member name="M:WebApplication2.ServiceCollectionExtensions.UseJWTAuthentication(Microsoft.AspNetCore.Builder.IApplicationBuilder)">
+            <summary>
+            启用JWT授权
+            </summary>
+            <param name="app"></param>
+        </member>
+        <member name="M:WebApplication2.ServiceCollectionExtensions.AddSwaggerDocument(Microsoft.Extensions.DependencyInjection.IServiceCollection,WebApplication2.SwaggerSetting)">
+            <summary>
+            添加Swagger
+            </summary>
+            <param name="services"></param>
+            <param name="swaggerSetting"></param>
+        </member>
+        <member name="M:WebApplication2.ServiceCollectionExtensions.UseSwaggerDocument(Microsoft.AspNetCore.Builder.IApplicationBuilder,WebApplication2.SwaggerSetting)">
+            <summary>
+            启用Swagger
+            </summary>
+            <param name="app"></param>
+            <param name="swaggerSetting"></param>
+        </member>
+        <member name="P:WebApplication2.SwaggerSetting.SwaggerGroups">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:WebApplication2.SwaggerSetting.TokenName">
+            <summary>
+            token名称
+            </summary>
+        </member>
+        <member name="P:WebApplication2.SwaggerSetting.TokenDescription">
+            <summary>
+            token描述
+            </summary>
+        </member>
+        <member name="P:WebApplication2.SwaggerSetting.ApiXmlName">
+            <summary>
+            api描述xml名
+            </summary>
+        </member>
+        <member name="P:WebApplication2.SwaggerSetting.EntityXmlName">
+            <summary>
+            entity描述xml名
+            </summary>
+        </member>
+        <member name="T:WebApplication2.SwaggerGroupSetting">
+            <summary>
+            文档分组配置
+            </summary>
+        </member>
+        <member name="P:WebApplication2.SwaggerGroupSetting.Title">
+            <summary>
+            标题
+            </summary>
+        </member>
+        <member name="P:WebApplication2.SwaggerGroupSetting.Version">
+            <summary>
+            版本（分组名）
+            </summary>
+        </member>
+        <member name="P:WebApplication2.SwaggerGroupSetting.Description">
+            <summary>
+            分组描述
+            </summary>
+        </member>
+        <member name="P:WebApplication2.SwaggerGroupSetting.Name">
+            <summary>
+            分组名
+            </summary>
+        </member>
+        <member name="T:ConsoleApp53.WeChatProvider">
+            <summary>
+            微信-提供器
+            </summary>
+        </member>
+        <member name="M:ConsoleApp53.WeChatProvider.GetJSCode2Session(System.String,System.String,System.String)">
+            <summary>
+            小程序-授权登录
+            </summary>
+            <param name="jsCode"></param>
+            <param name="appKey"></param>
+            <param name="appSecret"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ConsoleApp53.WeChatProvider.GetAccess_Token(System.String,System.String)">
+            <summary>
+             小程序-获取Token
+            </summary>
+            <param name="appKey"></param>
+            <param name="appSecret"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ConsoleApp53.WeChatProvider.GetWXACode(System.String,System.String,System.Int32)">
+            <summary>
+            小程序-获取二维码
+            </summary>
+            <param name="access_token"></param>
+            <param name="path"></param>
+            <param name="width"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
