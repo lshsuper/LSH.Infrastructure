@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Options;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace WebApplication2.Controllers
@@ -17,11 +19,16 @@ namespace WebApplication2.Controllers
     /// 用户信息
     /// </summary>
     [Route("api/[controller]/[action]"), ApiExplorerSettings(GroupName = "User")]
-    
+
     public class UserController : JWTApiController
     {
+        private readonly IOptions<JWTSetting> _jwtSetting;
+        public UserController(IOptions<JWTSetting> jwtSetting)
+        {
+            _jwtSetting = jwtSetting;
+        }
 
-       [HttpGet]
+        [HttpGet]
         public string Get()
         {
             return "我通过授权啦，i am admin";
@@ -30,6 +37,7 @@ namespace WebApplication2.Controllers
         [HttpGet, AllowAnonymous]
         public string Login(string name, string pwd)
         {
+            var a = _jwtSetting;
             var claim = new Claim[]{
                    new Claim("UserID",Guid.NewGuid().ToString("N")),
                    new Claim("UserName",name)
@@ -45,7 +53,7 @@ namespace WebApplication2.Controllers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-          
+
 
     }
 }

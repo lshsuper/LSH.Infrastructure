@@ -19,6 +19,11 @@ namespace WebApplication2
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>().UseKestrel();
+                .UseStartup<Startup>().UseKestrel().ConfigureAppConfiguration((ctx, cnf) =>
+                {
+                    var env = ctx.HostingEnvironment;
+                    cnf.AddJsonFile("appsettings.json", true, true)
+                       .AddJsonFile($"application_{env.EnvironmentName}.json", true, true);
+                });
     }
 }

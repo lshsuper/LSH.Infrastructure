@@ -27,6 +27,7 @@ namespace WebApplication2
         }
 
         public IConfiguration Configuration { get; }
+        
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -50,6 +51,9 @@ namespace WebApplication2
                 },
                 ApiXmlName = "Api_Demo.xml"
             });
+         
+            services.AddOptions();
+            services.Configure<JWTSetting>(Configuration.GetSection("JWT"));
 
         }
 
