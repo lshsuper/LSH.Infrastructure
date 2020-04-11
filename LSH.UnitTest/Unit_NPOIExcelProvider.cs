@@ -1,6 +1,7 @@
 ﻿using LSH.Infrastructure;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -24,6 +25,9 @@ namespace LSH.UnitTest
 
             using (NPOIExcelProvider _proveder = new NPOIExcelProvider(NPOIExcelType.XLSX))
             {
+
+                var a = _proveder.Book;
+                a = null;
                 var sheet = new NPOIExcelSheet()
                 {
                     SheetName = "lsh",
@@ -32,7 +36,7 @@ namespace LSH.UnitTest
                         new NPOIExcelRow(){
                              EnableRegion=true,
                              Cells=new List<NPOIExcelCell>(){ new NPOIExcelCell() { IsAutoWidth=true, Value="工作量统计",
-                                        Style=_proveder.GetSimpleCellStyle(),Type=CellType.String
+                                        Style=_proveder.SimpleCellStyle(),Type=CellType.String
                              } },
                               Regions=new List<NPOIExcelMergeRegion>() {
                               new NPOIExcelMergeRegion(){
@@ -46,11 +50,11 @@ namespace LSH.UnitTest
                                   Cells=new List<NPOIExcelCell>(){
                                         new NPOIExcelCell(){
                                               IsAutoWidth=true,
-                                               Value="一月",Style=_proveder.GetSimpleCellStyle(),Type=CellType.String
+                                               Value="一月",Style=_proveder.SimpleCellStyle(),Type=CellType.String
                                         },
                                          new NPOIExcelCell(){
                                               IsAutoWidth=true,
-                                               Value="二月",Style=_proveder.GetSimpleCellStyle(),Type=CellType.String
+                                               Value="二月",Style=_proveder.SimpleCellStyle(),Type=CellType.String
 
                                         }
                                   }
@@ -64,8 +68,8 @@ namespace LSH.UnitTest
                     sheet.Rows.Add(new NPOIExcelRow()
                     {
                         Cells = new List<NPOIExcelCell>(){
-                                new NPOIExcelCell(){ IsAutoWidth=true, Value=ele.One, Type=CellType.Numeric,Style=_proveder.GetSimpleCellStyle() },
-                                new NPOIExcelCell(){ IsAutoWidth=true, Value=ele.Two, Type=CellType.Numeric,Style=_proveder.GetSimpleCellStyle() }
+                                new NPOIExcelCell(){ IsAutoWidth=true, Value=ele.One, Type=CellType.Numeric,Style=_proveder.SimpleCellStyle() },
+                                new NPOIExcelCell(){ IsAutoWidth=true, Value=ele.Two, Type=CellType.Numeric,Style=_proveder.SimpleCellStyle() }
                            }
                     });
 
@@ -78,11 +82,18 @@ namespace LSH.UnitTest
             }
         }
 
+        [TestMethod]
+        public  void Test()
+        {
+              
+        }
+
     }
 
 
     public class WorkDetail
     {
+       
         public int One { get; set; }
 
         public int Two { get; set; }

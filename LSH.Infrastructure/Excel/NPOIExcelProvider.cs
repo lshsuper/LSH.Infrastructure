@@ -4,6 +4,7 @@ using NPOI.SS.Util;
 using NPOI.XSSF.UserModel;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Text;
@@ -13,62 +14,62 @@ namespace LSH.Infrastructure
     public class NPOIExcelProvider : IDisposable
     {
 
-        private IWorkbook _book;
-        private FileStream _fs;
-        private NPOIExcelType _excelType;
+        public IWorkbook Book { get; private set; }
+       
+        public NPOIExcelType ExcelType { get; private set; }
 
         #region +初始化器
 
         public NPOIExcelProvider(NPOIExcelType excelType)
         {
-            if (_book != null) return;
+            if (Book != null) return;
 
 
             switch (excelType)
             {
                 case NPOIExcelType.XLS:
-                    _book = new XSSFWorkbook();
+                    Book = new XSSFWorkbook();
                     break;
                 case NPOIExcelType.XLSX:
-                    _book = new HSSFWorkbook();
+                    Book = new HSSFWorkbook();
                     break;
                 default:
                     throw new Exception("excel文件类型不正确");
 
             }
 
-            _excelType = excelType;
+            ExcelType = excelType;
 
 
         }
         public NPOIExcelProvider(Stream stream, NPOIExcelType excelType)
         {
-            if (_book != null) return;
+            if (Book != null) return;
 
 
             switch (excelType)
             {
                 case NPOIExcelType.XLS:
-                    _book = new XSSFWorkbook(stream);
+                    Book = new XSSFWorkbook(stream);
                     break;
                 case NPOIExcelType.XLSX:
-                    _book = new HSSFWorkbook();
+                    Book = new HSSFWorkbook();
                     break;
                 default:
                     throw new Exception("excel文件类型不正确");
 
             }
-            _excelType = excelType;
+            ExcelType = excelType;
 
 
-        } 
+        }
 
         #endregion
 
         public void CreteSheet(NPOIExcelSheet sheet)
         {
 
-            ISheet curSheet = _book.CreateSheet(sheet.SheetName);
+            ISheet curSheet = Book.CreateSheet(sheet.SheetName);
             int rowIndex = 0;
 
             foreach (var row in sheet.Rows)
@@ -77,7 +78,7 @@ namespace LSH.Infrastructure
                 int cellIndex = 0;
                 foreach (var cell in row.Cells)
                 {
-                    ICell curCell = curRow.CreateCell(cellIndex,cell.Type);
+                    ICell curCell = curRow.CreateCell(cellIndex, cell.Type);
                     curCell.SetCellValue(cell.Value);
                     if (cell.IsAutoWidth)
                     {
@@ -111,20 +112,20 @@ namespace LSH.Infrastructure
                     rowIndex++;
                 }
 
-                _book.CreateCellStyle();
+                Book.CreateCellStyle();
 
 
             }
 
         }
 
-        public ICellStyle GetSimpleCellStyle()
+        public ICellStyle SimpleCellStyle()
         {
-            ICellStyle style = CreateCellStyle();
+            ICellStyle style = Book.CreateCellStyle();
 
             style.Alignment = HorizontalAlignment.Center;
             style.VerticalAlignment = VerticalAlignment.Center;
-            IFont font = _book.CreateFont();
+            IFont font = Book.CreateFont();
             font.FontName = "宋体";
             font.FontHeightInPoints = 12;
             style.SetFont(font);
@@ -132,20 +133,14 @@ namespace LSH.Infrastructure
         }
 
         /// <summary>
-        /// 创建一个单元格样式实例
-        /// </summary>
-        /// <returns></returns>
-        public ICellStyle CreateCellStyle()
-        {
-            return _book.CreateCellStyle();
-        }
-        /// <summary>
         /// 生成文档
         /// </summary>
-        public void Save(string fileName,string directory)
+        public void Save(string fileName, string directory)
         {
-            _fs = new FileStream($"{directory}\\{fileName}.{_excelType.ToString().ToLower()}", FileMode.Create, FileAccess.Write);
-            _book.Write(_fs);
+            using (FileStream _fs = new FileStream($"{directory}\\{fileName}.{ExcelType.ToString().ToLower()}", FileMode.Create, FileAccess.Write))
+            {
+                Book.Write(_fs);
+            }
         }
         /// <summary>
         /// 自适应宽度
@@ -162,21 +157,58 @@ namespace LSH.Infrastructure
             }
         }
 
-        public void Dispose()
+        public DataTable SimpleReaderAt(int sheetIndex=0)
         {
-            if (_fs != null)
-            {
-                _fs.Dispose();
-                _fs.Close();
+            DataTable dt = new DataTable();
+            ISheet curSheet = Book.GetSheetAt(sheetIndex);
+            dt.TableName = curSheet.SheetName;
 
+            if (curSheet.LastRowNum <= 1) return dt;
+
+            IRow header = curSheet.GetRow(0);
+            foreach (var cell in header.Cells)
+            {
+                dt.Columns.Add(cell.StringCellValue);
             }
 
-
-            if (_book != null)
+            int rowIndex = 1;
+            while (rowIndex > curSheet.LastRowNum)
             {
-                _book.Close();
+                var curRow = curSheet.GetRow(rowIndex);
+                DataRow row = dt.NewRow();
+                int cellIndex = 0;
+                foreach (DataColumn column in dt.Columns)
+                {
+                    row[column.ColumnName] = curRow.Cells[cellIndex].StringCellValue;
+                }
+                rowIndex++;
             }
+            return dt;
         }
 
+        public DataSet SimpleReader()
+        {
+            DataSet ds = new DataSet();
+            int count = Book.NumberOfSheets; //获取所有SheetName
+            int sheetIndex = 0;
+            while (sheetIndex<count)
+            {
+                ds.Tables.Add(SimpleReaderAt(sheetIndex));
+                sheetIndex++;
+            }
+            return ds;
+        }
+
+
+        public void Dispose()
+        {
+           
+            if (Book != null)
+            {
+                Book.Close();
+            }
+        }
+       
+     
     }
 }
