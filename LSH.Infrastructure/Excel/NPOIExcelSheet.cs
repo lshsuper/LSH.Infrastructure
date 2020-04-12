@@ -12,6 +12,7 @@ namespace LSH.Infrastructure
         public NPOIExcelSheet()
         {
             Rows = new List<NPOIExcelRow>();
+            Chart = new List<NPOIExcelChart>();
 
         }
         /// <summary>
@@ -23,6 +24,9 @@ namespace LSH.Infrastructure
         /// 行数据
         /// </summary>
         public List<NPOIExcelRow> Rows { get; set; }
+
+
+        public List<NPOIExcelChart> Chart { get; set; }
 
 
     }
@@ -93,4 +97,29 @@ namespace LSH.Infrastructure
 
 
     }
+
+
+    public class NPOIExcelChart {
+
+           public  List<string> Axis { get; set; }
+
+
+           public  Dictionary<string,List<double>> Data { get; set; }
+
+           public string Title { get; set; }
+
+           public  int MarginBottom { get; set; }
+
+        public NPOIExcelChartType ExcelChartType { get; set; }
+
+
+    }
+
+    public enum NPOIExcelChartType {
+
+           Bar=1,
+           Line=2
+
+    }
+
 }

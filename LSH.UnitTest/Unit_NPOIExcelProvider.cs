@@ -11,11 +11,12 @@ namespace LSH.UnitTest
 
 
     [TestClass]
-   public class Unit_NPOIExcelProvider
+    public class Unit_NPOIExcelProvider
     {
         [TestMethod]
         public void UnitCreateSheet()
         {
+
             List<WorkDetail> details = new List<WorkDetail>() {
 
                  new WorkDetail(){ One=120,Two=200 },
@@ -26,8 +27,7 @@ namespace LSH.UnitTest
             using (NPOIExcelProvider _proveder = new NPOIExcelProvider(NPOIExcelType.XLSX))
             {
 
-                var a = _proveder.Book;
-                a = null;
+
                 var sheet = new NPOIExcelSheet()
                 {
                     SheetName = "lsh",
@@ -83,9 +83,37 @@ namespace LSH.UnitTest
         }
 
         [TestMethod]
-        public  void Test()
+        public void CreateChart()
         {
-              
+            using (NPOIExcelProvider _proveder = new NPOIExcelProvider(NPOIExcelType.XLS))
+            {
+                _proveder.CreteSheet(new NPOIExcelSheet()
+                {
+                    SheetName="sheet01",
+                    Chart = new List<NPOIExcelChart>() {
+                          new NPOIExcelChart(){ Axis=new List<string>(){"周一","周二", "周三", "周四", "周五", "周六", "周日" },
+                          Data=new Dictionary<string, List<double>>(){
+                                 ["人数"]=new List<double>(){20,30,40,20,40,50,70 },
+                                 ["平均分"]=new List<double>(){80,70,30,50,90,67,60 }
+
+                          },
+                           ExcelChartType=NPOIExcelChartType.Line,
+                            MarginBottom=20,
+                             Title="晨读"
+
+                   },
+
+                     }
+                });
+                _proveder.Save("3", "c:\\lsh");
+            }
+
+        }
+
+        [TestMethod]
+        public void Test()
+        {
+
         }
 
     }
@@ -93,7 +121,7 @@ namespace LSH.UnitTest
 
     public class WorkDetail
     {
-       
+
         public int One { get; set; }
 
         public int Two { get; set; }
