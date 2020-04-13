@@ -113,6 +113,7 @@ namespace LSH.UnitTest
         [TestMethod]
         public void Test()
         {
+            var str = @"[内部自我认知|(多元升学指导|自主招生|综合评价录取|三大专项)]";
 
         }
 
