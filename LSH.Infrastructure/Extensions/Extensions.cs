@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -75,5 +76,32 @@ namespace LSH.Infrastructure.Extensions
         }
 
 
+
+        public static IList<T> ToList<T>(this string json)
+        {
+            try
+            {
+                return JsonConvert.DeserializeObject<IList<T>>(json);
+            }
+            catch (Exception ex)
+            {
+                return default(List<T>);
+            }
+            
+        }
+
+
+        public  static  T ToObject<T>(this string json)
+        {
+            try
+            {
+                return JsonConvert.DeserializeObject<T>(json);
+            }
+            catch (Exception ex)
+            {
+                return default(T); ;
+            }
+
+        }
     }
 }

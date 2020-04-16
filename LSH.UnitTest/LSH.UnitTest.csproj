@@ -16,4 +16,10 @@
     <ProjectReference Include="..\LSH.Infrastructure\LSH.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="AppData\areas.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
