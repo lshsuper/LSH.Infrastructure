@@ -12,8 +12,10 @@
     <PackageReference Include="Dapper" Version="2.0.35" />
     <PackageReference Include="MySql.Data" Version="8.0.19" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="NPinyin.Core" Version="3.0.0" />
     <PackageReference Include="NPOI" Version="2.5.1" />
     <PackageReference Include="PdfSharpCore" Version="1.1.23" />
+    <PackageReference Include="PinYinConverterCore" Version="1.0.2" />
     <PackageReference Include="WkHtmlWrapper.Pdf" Version="1.0.89" />
   </ItemGroup>
 

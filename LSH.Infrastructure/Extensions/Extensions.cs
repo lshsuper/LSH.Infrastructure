@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.International.Converters.PinYinConverter;
+using Newtonsoft.Json;
+using NPinyin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -103,6 +105,58 @@ namespace LSH.Infrastructure.Extensions
                 return default(T); ;
             }
 
+        }
+
+
+        public static string ToPinyin(this string words)
+        {
+            try
+            {
+                if (words.Length != 0)
+                {
+                    StringBuilder fullSpell = new StringBuilder();
+                    for (int i = 0; i < words.Length; i++)
+                    {
+                        var chr = words[i];
+                        fullSpell.Append(GetSpell(chr));
+                    }
+
+                    return fullSpell.ToString().ToUpper();
+                }
+            }
+            catch (Exception ex)
+            {
+                //Console.WriteLine("全拼转化出错！" + e.Message);
+            }
+
+            return string.Empty;
+        }
+
+        private static string GetSpell(char chr)
+        {
+            var coverchr = Pinyin.GetPinyin(chr);
+
+            bool isChineses = ChineseChar.IsValidChar(coverchr[0]);
+            if (isChineses)
+            {
+                ChineseChar chineseChar = new ChineseChar(coverchr[0]);
+                foreach (string value in chineseChar.Pinyins)
+                {
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                        return value.Remove(value.Length - 1, 1);
+                    }
+                }
+            }
+
+            return coverchr;
+
+        }
+
+
+        public static string ToFirstUpper(this string pinyin)
+        {
+            return pinyin.Substring(0, 1).ToUpper() + pinyin.Substring(1); 
         }
     }
 }
