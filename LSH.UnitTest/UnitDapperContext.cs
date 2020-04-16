@@ -165,7 +165,7 @@ namespace LSH.UnitTest
                 });
 
 
-                int count = _ctx.Excute(sql.ToString());
+                int count = _ctx.Execute(sql.ToString());
 
             }
         }

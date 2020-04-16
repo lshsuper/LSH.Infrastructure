@@ -80,7 +80,7 @@ namespace LSH.Infrastructure.Dapper
             return _database.QueryFirst<T>(sql, paramArr);
         }
 
-        public int Excute(string sql, object paramObj = null)
+        public int Execute(string sql, object paramObj = null)
         {
             return _database.Execute(sql, paramObj);
         }
