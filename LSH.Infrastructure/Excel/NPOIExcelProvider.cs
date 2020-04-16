@@ -141,7 +141,7 @@ namespace LSH.Infrastructure
         public ICellStyle SimpleCellStyle()
         {
             ICellStyle style = _book.CreateCellStyle();
-
+            
             style.Alignment = HorizontalAlignment.Center;
             style.VerticalAlignment = VerticalAlignment.Center;
             IFont font = _book.CreateFont();

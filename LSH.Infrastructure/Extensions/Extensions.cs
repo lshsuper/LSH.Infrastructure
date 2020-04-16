@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -56,7 +58,7 @@ namespace LSH.Infrastructure.Extensions
         /// <param name="input"></param>
         /// <param name="keywords"></param>
         /// <returns></returns>
-        public static bool Exist(this string input, string[] keywords)
+        public static bool Exist(this string input,params string[] keywords)
         {
             StringBuilder pattern = new StringBuilder($@"^.*");
             for (int i = 0; i < keywords.Length; i++)
@@ -73,7 +75,6 @@ namespace LSH.Infrastructure.Extensions
             pattern.Append(".*$");
             return Regex.IsMatch(input, pattern.ToString());
         }
-
-
+       
     }
 }

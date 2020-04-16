@@ -19,9 +19,12 @@ namespace LSH.UnitTest
 
             //string msg =Encoding.Unicode.get(Encoding.UTF8.GetBytes("中国"));
 
-           // string[] msg = "中国".ToUnicode();
+            // string[] msg = "中国".ToUnicode();
 
-            bool isHas = "A中国saaaa".Exist(new string[] { "中国s","abc"});
+            bool isHas = "A中国saaaa".Exist("中国s");
+
+         
+            
 
         }
 
