@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -76,5 +77,32 @@ namespace LSH.Infrastructure.Extensions
             return Regex.IsMatch(input, pattern.ToString());
         }
        
+
+        public static IList<T> ToList<T>(this string json)
+        {
+            try
+            {
+                return JsonConvert.DeserializeObject<IList<T>>(json);
+            }
+            catch (Exception ex)
+            {
+                return default(List<T>);
+            }
+            
+        }
+
+
+        public  static  T ToObject<T>(this string json)
+        {
+            try
+            {
+                return JsonConvert.DeserializeObject<T>(json);
+            }
+            catch (Exception ex)
+            {
+                return default(T); ;
+            }
+
+        }
     }
 }
