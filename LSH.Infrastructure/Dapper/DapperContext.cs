@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Dapper.Contrib.Extensions;
 using MySql.Data.MySqlClient;
 using Npgsql;
 using Oracle.ManagedDataAccess.Client;
@@ -9,48 +10,48 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Data.SQLite;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace LSH.Infrastructure.Dapper
 {
     public class DapperContext : IDisposable
     {
         //连接
-        private IDbConnection _database;
+        public IDbConnection Database { get; private set; }
         //事务
         private IDbTransaction _tran;
 
-        public DapperContext(string connStr, DatabaseType type)
+        public DapperContext(string connStr, DatabaseType type=DatabaseType.Mysql)
         {
             switch (type)
             {
                 case DatabaseType.Mysql:
-                    _database = new MySqlConnection(connStr);
+                    Database = new MySqlConnection(connStr);
                     break;
                 case DatabaseType.Sqlserver:
-                    _database = new SqlConnection(connStr);
+                    Database = new SqlConnection(connStr);
                     break;
                 case DatabaseType.Postgresql:
-                    _database = new NpgsqlConnection(connStr);
+                    Database = new NpgsqlConnection(connStr);
                     break;
                 case DatabaseType.Sqlite:
-                    _database = new SQLiteConnection(connStr);
+                    Database = new SQLiteConnection(connStr);
                     break;
                 case DatabaseType.Oracle:
-                    _database = new OracleConnection(connStr);
+                    Database = new OracleConnection(connStr);
                     break;
                 default:
                     break;
             }
         }
-
-
+ 
         public IDbTransaction TranBegin()
         {
             if (_tran != null)
                 return _tran;
 
-            _database.Open();
-            _tran = _database.BeginTransaction();
+            Database.Open();
+            _tran = Database.BeginTransaction();
             return _tran;
         }
 
@@ -72,23 +73,50 @@ namespace LSH.Infrastructure.Dapper
 
         public IEnumerable<T> Query<T>(string sql, object paramObj = null)
         {
-            return _database.Query<T>(sql, paramObj);
+            return Database.Query<T>(sql, paramObj);
         }
 
-        public T Find<T>(string sql, params object[] paramArr)
+        public Task<IEnumerable<T>> QueryAsync<T>(string sql, object paramObj = null)
         {
-            return _database.QueryFirst<T>(sql, paramArr);
+            return Database.QueryAsync<T>(sql, paramObj);
+        }
+
+        public T Find<T>(string sql, object paramObj=null)
+        {
+            return Database.QueryFirstOrDefault<T>(sql, paramObj);
+        }
+
+        public Task<T> FindAsync<T>(string sql, object paramObj = null)
+        {
+            return Database.QueryFirstOrDefaultAsync<T>(sql, paramObj);
         }
 
         public int Execute(string sql, object paramObj = null)
         {
-            return _database.Execute(sql, paramObj);
+            return Database.Execute(sql, paramObj);
+        }
+        public Task<int> ExecuteAsync(string sql, object paramObj = null)
+        {
+            return Database.ExecuteAsync(sql, paramObj);
         }
 
-        public T ExecuteScalar<T>(string sql, object paramObj = null)
+        public T Scalar<T>(string sql, object paramObj = null)
         {
-            return _database.ExecuteScalar<T>(sql, paramObj);
+            return Database.ExecuteScalar<T>(sql, paramObj);
         }
+
+
+     
+        //public T QueryMuilt(string sql, object paramObj = null)
+        //{
+        //    using (var reader= Database.QueryMultiple(sql, paramObj))
+        //    {
+            
+        //        reader.Read();
+        //    }
+            
+        //}
+
 
         public void Dispose()
         {
@@ -99,11 +127,11 @@ namespace LSH.Infrastructure.Dapper
                 _tran = null;
             }
             //销毁连接
-            if (_database != null && _database.State == ConnectionState.Open)
+            if (Database != null && Database.State == ConnectionState.Open)
             {
-                _database.Dispose();
-                _database.Close();
-                _database = null;
+                Database.Dispose();
+                Database.Close();
+                Database = null;
 
             }
 

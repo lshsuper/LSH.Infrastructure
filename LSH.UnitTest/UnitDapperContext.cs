@@ -173,12 +173,6 @@ namespace LSH.UnitTest
     }
 
 
-
-
-
-
-
-
     public class DbModel
     {
 
@@ -211,8 +205,6 @@ namespace LSH.UnitTest
 
         public int status { get; set; }
         public string message { get; set; }
-
-
         public string data_version { get; set; }
 
         public List<List<TData_Result_Element>> result { get; set; }
