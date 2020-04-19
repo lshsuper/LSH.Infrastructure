@@ -7,7 +7,7 @@ namespace LSH.Infrastructure.Dapper
     public class DapperFactory
     {
 
-        public  DapperContext Create(string connStr, DatabaseType type = DatabaseType.Mysql)
+        public DapperContext Create(string connStr, DatabaseType type = DatabaseType.Mysql)
         {
             return new DapperContext(connStr, type);
         }
@@ -19,7 +19,7 @@ namespace LSH.Infrastructure.Dapper
             return new DapperContext("", DatabaseType.Mysql);
         }
 
-       
+
 
     }
 }

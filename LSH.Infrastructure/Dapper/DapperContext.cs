@@ -44,7 +44,8 @@ namespace LSH.Infrastructure.Dapper
                     break;
             }
         }
- 
+
+        #region +Tran
         public IDbTransaction TranBegin()
         {
             if (_tran != null)
@@ -69,52 +70,137 @@ namespace LSH.Infrastructure.Dapper
             {
                 _tran.Rollback();
             }
-        }
+        } 
+        #endregion
 
-        public IEnumerable<T> Query<T>(string sql, object paramObj = null)
+        #region +Query
+        public IEnumerable<T> Query<T>(string sql, object paramObj = null, IDbTransaction tran = null)
         {
-            return Database.Query<T>(sql, paramObj);
+            return Database.Query<T>(sql, paramObj, tran);
         }
 
-        public Task<IEnumerable<T>> QueryAsync<T>(string sql, object paramObj = null)
+        public Task<IEnumerable<T>> QueryAsync<T>(string sql, object paramObj = null, IDbTransaction tran = null)
         {
-            return Database.QueryAsync<T>(sql, paramObj);
+            return Database.QueryAsync<T>(sql, paramObj, tran);
         }
 
-        public T Find<T>(string sql, object paramObj=null)
+        #endregion
+
+        #region +Execute
+        public int Execute(string sql, object paramObj = null, IDbTransaction tran = null)
         {
-            return Database.QueryFirstOrDefault<T>(sql, paramObj);
+            return Database.Execute(sql, paramObj, tran);
         }
-
-        public Task<T> FindAsync<T>(string sql, object paramObj = null)
+        public Task<int> ExecuteAsync(string sql, object paramObj = null, IDbTransaction tran = null)
         {
-            return Database.QueryFirstOrDefaultAsync<T>(sql, paramObj);
+            return Database.ExecuteAsync(sql, paramObj, tran);
         }
+        #endregion
 
-        public int Execute(string sql, object paramObj = null)
+        #region +Scalar
+        public T Scalar<T>(string sql, object paramObj = null, IDbTransaction tran = null)
         {
-            return Database.Execute(sql, paramObj);
+            return Database.ExecuteScalar<T>(sql, paramObj, tran);
         }
-        public Task<int> ExecuteAsync(string sql, object paramObj = null)
+        public Task<T> ScalarAsync<T>(string sql, object paramObj = null, IDbTransaction tran = null)
         {
-            return Database.ExecuteAsync(sql, paramObj);
-        }
+            return Database.ExecuteScalarAsync<T>(sql, paramObj, tran);
+        } 
 
-        public T Scalar<T>(string sql, object paramObj = null)
+        #endregion
+
+        #region +Find
+        public T Find<T>(string sql, object paramObj = null, IDbTransaction tran = null)
         {
-            return Database.ExecuteScalar<T>(sql, paramObj);
+            return Database.QueryFirstOrDefault<T>(sql, paramObj, tran);
         }
 
+        public Task<T> FindAsync<T>(string sql, object paramObj = null, IDbTransaction tran = null)
+        {
+            return Database.QueryFirstOrDefaultAsync<T>(sql, paramObj, tran);
+        }
+        public T Find<T>(object id) where T : class, new()
+        {
+            return Database.Get<T>(id);
+        }
+        public Task<T> FindAsync<T>(object id) where T : class, new()
+        {
 
-     
+            return Database.GetAsync<T>(id);
+        }
+        #endregion
+
+        #region +FindAll
+        public IEnumerable<T> FindAll<T>() where T : class, new()
+        {
+            return Database.GetAll<T>();
+        }
+
+        public Task<IEnumerable<T>> FindAllAsync<T>() where T : class, new()
+        {
+            return Database.GetAllAsync<T>();
+        }
+        #endregion
+
+        #region +Add
+        public long Add<T>(T model) where T : class, new()
+        {
+
+            return Database.Insert<T>(model);
+        }
+
+        public Task<int> AddAsync<T>(T model) where T : class, new()
+        {
+
+            return Database.InsertAsync<T>(model);
+        }
+        #endregion
+
+        #region +Modify
+        public Task<bool> ModifyAsync<T>(T model) where T : class, new()
+        {
+            return Database.UpdateAsync<T>(model);
+        }
+
+        public bool Modify<T>(T model) where T : class, new()
+        {
+            return Database.Update<T>(model);
+        }
+        #endregion
+
+        #region +Remove
+        public bool Remove<T>(T model) where T : class, new()
+        {
+            return Database.Delete<T>(model);
+        }
+
+        public Task<bool> RemoveAsync<T>(T model) where T : class, new()
+        {
+            return  Database.DeleteAsync<T>(model);
+        }
+        #endregion
+
+        #region +Clear
+        public Task<bool> ClearAsync<T>() where T : class, new()
+        {
+            return Database.DeleteAllAsync<T>();
+        }
+
+        public bool Clear<T>() where T : class, new()
+        {
+            return Database.DeleteAll<T>();
+        }
+        #endregion
+
+
         //public T QueryMuilt(string sql, object paramObj = null)
         //{
         //    using (var reader= Database.QueryMultiple(sql, paramObj))
         //    {
-            
+
         //        reader.Read();
         //    }
-            
+
         //}
 
 
