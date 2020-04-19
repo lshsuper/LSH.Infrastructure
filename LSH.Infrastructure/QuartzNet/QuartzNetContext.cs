@@ -19,13 +19,11 @@ namespace LSH.Infrastructure.QuartzNet
             _factory = DirectSchedulerFactory.Instance;
         }
 
-
         public void ScheduleJob(ITrigger trigger, IJobDetail job, string schdulerName)
         {
             var curScheduler = GetScheduler(schdulerName);
             curScheduler.ScheduleJob(job, trigger);
         }
-
 
         public IJobDetail CreateJob(QuartzNetJobOption option)
         {
@@ -33,7 +31,6 @@ namespace LSH.Infrastructure.QuartzNet
             IJobDetail job = JobBuilder.Create(option.JobType).WithIdentity(option.JobName, option.JobGroup).Build();
             return job;
         }
-
 
         public ITrigger CreateTrigger(QuartzNetTriggerOption option)
         {
@@ -51,8 +48,6 @@ namespace LSH.Infrastructure.QuartzNet
 
             });
         }
-
-
         public void StartScheduler(string schedulerName)
         {
             var curScheduler = GetScheduler(schedulerName);
@@ -67,6 +62,7 @@ namespace LSH.Infrastructure.QuartzNet
             if (!curScheduler.IsShutdown)
                 curScheduler.Shutdown();
         }
+
         private IScheduler GetScheduler(string name)
         {
             return _factory.GetScheduler(name).Result;
