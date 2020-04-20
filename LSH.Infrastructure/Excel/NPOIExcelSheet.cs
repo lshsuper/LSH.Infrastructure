@@ -7,8 +7,6 @@ namespace LSH.Infrastructure
 {
     public class NPOIExcelSheet
     {
-
-
         public NPOIExcelSheet()
         {
             Rows = new List<NPOIExcelRow>();
@@ -25,9 +23,8 @@ namespace LSH.Infrastructure
         /// </summary>
         public List<NPOIExcelRow> Rows { get; set; }
 
-
+        //图表
         public List<NPOIExcelChart> Chart { get; set; }
-
 
     }
 
@@ -48,15 +45,16 @@ namespace LSH.Infrastructure
 
         public bool EnableRegion { get; set; }
 
+        public int Height { get; set; }
+
     }
 
     public class NPOIExcelCell
     {
-
         public NPOIExcelCell()
         {
             IsAutoWidth = true;
-            
+
         }
         public dynamic Value { get; set; }
 
@@ -90,35 +88,37 @@ namespace LSH.Infrastructure
     public enum NPOIExcelType
     {
 
-        XLS=1,
+        XLS = 1,
 
-        XLSX=2
+        XLSX = 2
 
 
 
     }
 
 
-    public class NPOIExcelChart {
+    public class NPOIExcelChart
+    {
 
-           public  List<string> Axis { get; set; }
+        public List<string> Axis { get; set; }
 
 
-           public  Dictionary<string,List<double>> Data { get; set; }
+        public Dictionary<string, List<double>> Data { get; set; }
 
-           public string Title { get; set; }
+        public string Title { get; set; }
 
-           public  int MarginBottom { get; set; }
+        public int MarginBottom { get; set; }
 
         public NPOIExcelChartType ExcelChartType { get; set; }
 
 
     }
 
-    public enum NPOIExcelChartType {
+    public enum NPOIExcelChartType
+    {
 
-           Bar=1,
-           Line=2
+        Bar = 1,
+        Line = 2
 
     }
 

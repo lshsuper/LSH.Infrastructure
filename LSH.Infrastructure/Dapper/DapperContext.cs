@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace LSH.Infrastructure.Dapper
 {
-    public class DapperContext : IDisposable
+    public sealed class DapperContext : IDisposable
     {
         //连接
         public IDbConnection Database { get; private set; }
@@ -46,7 +46,7 @@ namespace LSH.Infrastructure.Dapper
         }
 
         #region +Tran
-        public IDbTransaction TranBegin()
+        public IDbTransaction BeginTran()
         {
             if (_tran != null)
                 return _tran;
@@ -56,7 +56,7 @@ namespace LSH.Infrastructure.Dapper
             return _tran;
         }
 
-        public void TranCommit()
+        public void CommitTran()
         {
             if (_tran != null)
             {
@@ -64,7 +64,7 @@ namespace LSH.Infrastructure.Dapper
             }
         }
 
-        public void TranRollback()
+        public void RollbackTran()
         {
             if (_tran != null)
             {

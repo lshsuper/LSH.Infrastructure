@@ -1,4 +1,5 @@
 ﻿using NPOI.HSSF.UserModel;
+using NPOI.HSSF.Util;
 using NPOI.SS.UserModel;
 using NPOI.SS.UserModel.Charts;
 using NPOI.SS.Util;
@@ -15,7 +16,6 @@ namespace LSH.Infrastructure
 {
     public class NPOIExcelProvider : IDisposable
     {
-
         public IWorkbook _book { get; private set; }
 
         public NPOIExcelType ExcelType { get; private set; }
@@ -95,6 +95,7 @@ namespace LSH.Infrastructure
                         }
                         cellIndex++;
                     }
+                    curRow.Height =(short)Convert.ToInt32(row.Height * 20);
 
                     //合并单元格策略
                     if (row.EnableRegion)
@@ -141,7 +142,6 @@ namespace LSH.Infrastructure
         public ICellStyle SimpleCellStyle()
         {
             ICellStyle style = _book.CreateCellStyle();
-            
             style.Alignment = HorizontalAlignment.Center;
             style.VerticalAlignment = VerticalAlignment.Center;
             IFont font = _book.CreateFont();
@@ -205,6 +205,16 @@ namespace LSH.Infrastructure
             return ds;
         }
 
+        public IFont CreateFont()
+        {
+            return _book.CreateFont();
+        }
+
+        public  ICellStyle CreateCellStyle()
+        {
+            return _book.CreateCellStyle();
+        }
+
         /// <summary>
         /// 创建一个图表实例
         /// </summary>
@@ -218,7 +228,7 @@ namespace LSH.Infrastructure
             IClientAnchor anchor = drawing.CreateAnchor(0, 0, 0, 0, 0, startRow, excelChart.Axis.Count, endRow);
             XSSFChart chart = drawing.CreateChart(anchor) as XSSFChart;
             chart.SetTitle(excelChart.Title);
-          
+
             chart.SetTitle(excelChart.Title);
 
             IChartLegend legend = chart.GetOrCreateLegend();
@@ -284,6 +294,12 @@ namespace LSH.Infrastructure
             {
                 _book.Close();
             }
+        }
+
+
+        public  void GetColor()
+        {
+             
         }
 
 
