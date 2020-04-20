@@ -222,7 +222,7 @@ namespace LSH.Infrastructure
         /// <param name="sheet"></param>
         private void CreateChart(NPOIExcelChart excelChart, ISheet sheet, int startRow, int endRow)
         {
-
+            if (ExcelType != NPOIExcelType.XLS) throw new NotImplementedException("只支持.xls文件作图");
 
             IDrawing drawing = sheet.CreateDrawingPatriarch();
             IClientAnchor anchor = drawing.CreateAnchor(0, 0, 0, 0, 0, startRow, excelChart.Axis.Count, endRow);
