@@ -229,8 +229,6 @@ namespace LSH.Infrastructure
             XSSFChart chart = drawing.CreateChart(anchor) as XSSFChart;
             chart.SetTitle(excelChart.Title);
 
-            chart.SetTitle(excelChart.Title);
-
             IChartLegend legend = chart.GetOrCreateLegend();
             legend.Position = LegendPosition.TopRight;
 
