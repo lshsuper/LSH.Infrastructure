@@ -34,16 +34,14 @@ namespace WebApplication2.Controllers
         {
             UserID = User.Claims.FirstOrDefault(f => f.Type == JWTClaimTypeConst.UserID)?.Value;
             string userName = User.Claims.FirstOrDefault(f => f.Type == JWTClaimTypeConst.UserName)?.Value,
-                   headImage= User.Claims.FirstOrDefault(f => f.Type == JWTClaimTypeConst.UserName)?.Value;
+                   headImage= User.Claims.FirstOrDefault(f => f.Type == JWTClaimTypeConst.HeadImage)?.Value;
            
             //此处可从redis获取具体信息
             Passport = new Passport()
             {
-
                 UserID = UserID,
                 UserName = userName,
                 HeadImage= headImage
-
             };
             base.OnActionExecuting(context);
         }
