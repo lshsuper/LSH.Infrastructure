@@ -1,4 +1,5 @@
-﻿using LSH.Infrastructure.QuartzNet;
+﻿using LSH.Infrastructure.Dapper;
+using LSH.Infrastructure.QuartzNet;
 using Quartz;
 using System;
 
@@ -10,6 +11,7 @@ namespace Console_Demo
         {
 
             Console.WriteLine(TimeSpan.Zero);
+            #region Quartz
             //QuartzNetContext _ctx = new QuartzNetContext();
 
             ////构建调度器
@@ -74,7 +76,14 @@ namespace Console_Demo
             //        Console.WriteLine("停止lsh_name");
             //        break;
             //    }
-            //}
+            //} 
+            #endregion
+
+            PageInfo pageInfo = new PageInfo();
+            pageInfo.DataCount = 200;
+            pageInfo.PageSize = 0;
+
+            
             Console.ReadKey();
         }
     }
