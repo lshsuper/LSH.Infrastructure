@@ -1,10 +1,14 @@
 ﻿using Microsoft.International.Converters.PinYinConverter;
 using Newtonsoft.Json;
 using NPinyin;
+using StackExchange.Redis;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -158,5 +162,8 @@ namespace LSH.Infrastructure.Extensions
         {
             return pinyin.Substring(0, 1).ToUpper() + pinyin.Substring(1); 
         }
+
+       
+
     }
 }

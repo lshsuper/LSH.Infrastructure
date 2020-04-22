@@ -21,6 +21,7 @@
     <PackageReference Include="PdfSharpCore" Version="1.1.23" />
     <PackageReference Include="PinYinConverterCore" Version="1.0.2" />
     <PackageReference Include="Quartz" Version="3.0.7" />
+    <PackageReference Include="StackExchange.Redis" Version="2.1.30" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.1" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.112" />
     <PackageReference Include="WkHtmlWrapper.Pdf" Version="1.0.89" />
