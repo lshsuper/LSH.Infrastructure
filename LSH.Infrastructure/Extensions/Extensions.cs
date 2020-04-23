@@ -163,6 +163,8 @@ namespace LSH.Infrastructure.Extensions
             return pinyin.Substring(0, 1).ToUpper() + pinyin.Substring(1); 
         }
 
+
+     
        
 
     }

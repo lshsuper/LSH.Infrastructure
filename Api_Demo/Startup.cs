@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Api_Demo.Extensions;
 using ConsoleApp53;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -41,7 +42,15 @@ namespace WebApplication2
             //services.AddSingleton<IAuthorizationHandler,AdminHandler>();
 
 
-            services.AddJWTAuthentication();
+            // services.AddJWTAuthentication();
+
+            services.AddAuthentication(options=> {
+
+                options.AddScheme<WeChatAuthenticationHandler>("DEFAULT_SCHEME_NAME", "Default Wechat Scheme");
+                options.DefaultAuthenticateScheme = "DEFAULT_SCHEME_NAME";
+                options.DefaultChallengeScheme = "DEFAULT_SCHEME_NAME";
+
+            });
             services.AddSwaggerDocument(new SwaggerSetting()
             {
                 SwaggerGroups = new List<SwaggerGroupSetting>() {
