@@ -207,23 +207,34 @@ namespace LSH.Infrastructure.Dapper
             }
         }
 
-        public Tuple<A, B> Muilt<A, B>(string muilSql, object paramObj = null)
+        public Tuple<IEnumerable<A>, IEnumerable<B>> Muilt<A, B>(string muilSql, object paramObj = null)
         {
             using (var muilt = Database.QueryMultiple(muilSql, paramObj))
             {
                 var one = muilt.Read<A>();
                 var two = muilt.Read<B>();
-                return Tuple.Create<A, B>(one.FirstOrDefault(), two.FirstOrDefault());
+                return Tuple.Create<IEnumerable<A>, IEnumerable<B>>(one, two);
             }
         }
-        public Tuple<A, B, C> Muilt<A, B, C>(string muilSql, object paramObj = null)
+        public Tuple<IEnumerable<A>, IEnumerable<B>, IEnumerable<C>> Muilt<A, B, C>(string muilSql, object paramObj = null)
         {
             using (var muilt = Database.QueryMultiple(muilSql, paramObj))
             {
                 var one = muilt.Read<A>();
                 var two = muilt.Read<B>();
                 var three = muilt.Read<C>();
-                return Tuple.Create<A, B, C>(one.FirstOrDefault(), two.FirstOrDefault(), three.FirstOrDefault());
+                return Tuple.Create<IEnumerable<A>, IEnumerable<B>, IEnumerable<C>>(one, two, three);
+            }
+        }
+        public Tuple<IEnumerable<A>, IEnumerable<B>, IEnumerable<C>, IEnumerable<D>> Muilt<A, B, C,D>(string muilSql, object paramObj = null)
+        {
+            using (var muilt = Database.QueryMultiple(muilSql, paramObj))
+            {
+                var one = muilt.Read<A>();
+                var two = muilt.Read<B>();
+                var three = muilt.Read<C>();
+                var four = muilt.Read<D>();
+                return Tuple.Create<IEnumerable<A>, IEnumerable<B>, IEnumerable<C>, IEnumerable<D>>(one, two, three,four);
             }
         }
         #endregion
