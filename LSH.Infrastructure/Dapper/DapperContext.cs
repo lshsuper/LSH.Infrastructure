@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Data.SQLite;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,7 +22,7 @@ namespace LSH.Infrastructure.Dapper
         //事务
         private IDbTransaction _tran;
 
-        public DapperContext(string connStr, DatabaseType type=DatabaseType.Mysql)
+        public DapperContext(string connStr, DatabaseType type = DatabaseType.Mysql)
         {
             switch (type)
             {
@@ -70,7 +71,7 @@ namespace LSH.Infrastructure.Dapper
             {
                 _tran.Rollback();
             }
-        } 
+        }
         #endregion
 
         #region +Query
@@ -105,7 +106,7 @@ namespace LSH.Infrastructure.Dapper
         public Task<T> ScalarAsync<T>(string sql, object paramObj = null, IDbTransaction tran = null)
         {
             return Database.ExecuteScalarAsync<T>(sql, paramObj, tran);
-        } 
+        }
 
         #endregion
 
@@ -176,7 +177,7 @@ namespace LSH.Infrastructure.Dapper
 
         public Task<bool> RemoveAsync<T>(T model) where T : class, new()
         {
-            return  Database.DeleteAsync<T>(model);
+            return Database.DeleteAsync<T>(model);
         }
         #endregion
 
@@ -193,15 +194,39 @@ namespace LSH.Infrastructure.Dapper
         #endregion
 
 
-        //public T QueryMuilt(string sql, object paramObj = null)
-        //{
-        //    using (var reader= Database.QueryMultiple(sql, paramObj))
-        //    {
+        #region +Muilt
+        public Tuple<IEnumerable<T>, int> Page<T>(string countSql, string dataSql, object paramObj = null)
+        {
+            using (var muilt = Database.QueryMultiple(string.Format("{0};{1}", countSql, dataSql), paramObj))
+            {
+                int count = muilt.Read<int>().FirstOrDefault();
+                if (count <= 0) return new Tuple<IEnumerable<T>, int>(new List<T>(), 0);
 
-        //        reader.Read();
-        //    }
+                var data = muilt.Read<T>();
+                return new Tuple<IEnumerable<T>, int>(data, count);
+            }
+        }
 
-        //}
+        public Tuple<A, B> Muilt<A, B>(string muilSql, object paramObj = null)
+        {
+            using (var muilt = Database.QueryMultiple(muilSql, paramObj))
+            {
+                var one = muilt.Read<A>();
+                var two = muilt.Read<B>();
+                return Tuple.Create<A, B>(one.FirstOrDefault(), two.FirstOrDefault());
+            }
+        }
+        public Tuple<A, B, C> Muilt<A, B, C>(string muilSql, object paramObj = null)
+        {
+            using (var muilt = Database.QueryMultiple(muilSql, paramObj))
+            {
+                var one = muilt.Read<A>();
+                var two = muilt.Read<B>();
+                var three = muilt.Read<C>();
+                return Tuple.Create<A, B, C>(one.FirstOrDefault(), two.FirstOrDefault(), three.FirstOrDefault());
+            }
+        }
+        #endregion
 
 
         public void Dispose()

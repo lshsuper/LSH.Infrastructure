@@ -79,9 +79,9 @@ namespace Console_Demo
             //} 
             #endregion
 
-            PageInfo pageInfo = new PageInfo();
-            pageInfo.DataCount = 200;
-            pageInfo.PageSize = 0;
+            //PageInfo pageInfo = new PageInfo();
+            //pageInfo.DataCount = 200;
+            //pageInfo.PageSize = 0;
 
             
             Console.ReadKey();
