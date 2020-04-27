@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Data.SQLite;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,28 +18,28 @@ namespace LSH.Infrastructure.Dapper
     public sealed class DapperContext : IDisposable
     {
         //连接
-        public IDbConnection Database { get; private set; }
+        public IDbConnection CurConn { get; private set; }
         //事务
-        private IDbTransaction _tran;
+        public IDbTransaction CurTran { get; private set; }
 
-        public DapperContext(string connStr, DatabaseType type=DatabaseType.Mysql)
+        public DapperContext(string connStr, DatabaseType type = DatabaseType.Mysql)
         {
             switch (type)
             {
                 case DatabaseType.Mysql:
-                    Database = new MySqlConnection(connStr);
+                    CurConn = new MySqlConnection(connStr);
                     break;
                 case DatabaseType.Sqlserver:
-                    Database = new SqlConnection(connStr);
+                    CurConn = new SqlConnection(connStr);
                     break;
                 case DatabaseType.Postgresql:
-                    Database = new NpgsqlConnection(connStr);
+                    CurConn = new NpgsqlConnection(connStr);
                     break;
                 case DatabaseType.Sqlite:
-                    Database = new SQLiteConnection(connStr);
+                    CurConn = new SQLiteConnection(connStr);
                     break;
                 case DatabaseType.Oracle:
-                    Database = new OracleConnection(connStr);
+                    CurConn = new OracleConnection(connStr);
                     break;
                 default:
                     break;
@@ -48,97 +49,97 @@ namespace LSH.Infrastructure.Dapper
         #region +Tran
         public IDbTransaction BeginTran()
         {
-            if (_tran != null)
-                return _tran;
+            if (CurTran != null)
+                return CurTran;
 
-            Database.Open();
-            _tran = Database.BeginTransaction();
-            return _tran;
+            CurConn.Open();
+            CurTran = CurConn.BeginTransaction();
+            return CurTran;
         }
 
         public void CommitTran()
         {
-            if (_tran != null)
+            if (CurTran != null)
             {
-                _tran.Commit();
+                CurTran.Commit();
             }
         }
 
         public void RollbackTran()
         {
-            if (_tran != null)
+            if (CurTran != null)
             {
-                _tran.Rollback();
+                CurTran.Rollback();
             }
-        } 
+        }
         #endregion
 
         #region +Query
-        public IEnumerable<T> Query<T>(string sql, object paramObj = null, IDbTransaction tran = null)
+        public IEnumerable<T> Query<T>(string sql, object paramObj = null, IDbTransaction CurTran = null)
         {
-            return Database.Query<T>(sql, paramObj, tran);
+            return CurConn.Query<T>(sql, paramObj, CurTran);
         }
 
-        public Task<IEnumerable<T>> QueryAsync<T>(string sql, object paramObj = null, IDbTransaction tran = null)
+        public Task<IEnumerable<T>> QueryAsync<T>(string sql, object paramObj = null, IDbTransaction CurTran = null)
         {
-            return Database.QueryAsync<T>(sql, paramObj, tran);
+            return CurConn.QueryAsync<T>(sql, paramObj, CurTran);
         }
 
         #endregion
 
         #region +Execute
-        public int Execute(string sql, object paramObj = null, IDbTransaction tran = null)
+        public int Execute(string sql, object paramObj = null, IDbTransaction CurTran = null)
         {
-            return Database.Execute(sql, paramObj, tran);
+            return CurConn.Execute(sql, paramObj, CurTran);
         }
-        public Task<int> ExecuteAsync(string sql, object paramObj = null, IDbTransaction tran = null)
+        public Task<int> ExecuteAsync(string sql, object paramObj = null, IDbTransaction CurTran = null)
         {
-            return Database.ExecuteAsync(sql, paramObj, tran);
+            return CurConn.ExecuteAsync(sql, paramObj, CurTran);
         }
         #endregion
 
         #region +Scalar
-        public T Scalar<T>(string sql, object paramObj = null, IDbTransaction tran = null)
+        public T Scalar<T>(string sql, object paramObj = null, IDbTransaction CurTran = null)
         {
-            return Database.ExecuteScalar<T>(sql, paramObj, tran);
+            return CurConn.ExecuteScalar<T>(sql, paramObj, CurTran);
         }
-        public Task<T> ScalarAsync<T>(string sql, object paramObj = null, IDbTransaction tran = null)
+        public Task<T> ScalarAsync<T>(string sql, object paramObj = null, IDbTransaction CurTran = null)
         {
-            return Database.ExecuteScalarAsync<T>(sql, paramObj, tran);
-        } 
+            return CurConn.ExecuteScalarAsync<T>(sql, paramObj, CurTran);
+        }
 
         #endregion
 
         #region +Find
-        public T Find<T>(string sql, object paramObj = null, IDbTransaction tran = null)
+        public T Find<T>(string sql, object paramObj = null, IDbTransaction CurTran = null)
         {
-            return Database.QueryFirstOrDefault<T>(sql, paramObj, tran);
+            return CurConn.QueryFirstOrDefault<T>(sql, paramObj, CurTran);
         }
 
-        public Task<T> FindAsync<T>(string sql, object paramObj = null, IDbTransaction tran = null)
+        public Task<T> FindAsync<T>(string sql, object paramObj = null, IDbTransaction CurTran = null)
         {
-            return Database.QueryFirstOrDefaultAsync<T>(sql, paramObj, tran);
+            return CurConn.QueryFirstOrDefaultAsync<T>(sql, paramObj, CurTran);
         }
         public T Find<T>(object id) where T : class, new()
         {
-            return Database.Get<T>(id);
+            return CurConn.Get<T>(id);
         }
         public Task<T> FindAsync<T>(object id) where T : class, new()
         {
 
-            return Database.GetAsync<T>(id);
+            return CurConn.GetAsync<T>(id);
         }
         #endregion
 
         #region +FindAll
         public IEnumerable<T> FindAll<T>() where T : class, new()
         {
-            return Database.GetAll<T>();
+            return CurConn.GetAll<T>();
         }
 
         public Task<IEnumerable<T>> FindAllAsync<T>() where T : class, new()
         {
-            return Database.GetAllAsync<T>();
+            return CurConn.GetAllAsync<T>();
         }
         #endregion
 
@@ -146,78 +147,115 @@ namespace LSH.Infrastructure.Dapper
         public long Add<T>(T model) where T : class, new()
         {
 
-            return Database.Insert<T>(model);
+            return CurConn.Insert<T>(model);
         }
 
         public Task<int> AddAsync<T>(T model) where T : class, new()
         {
 
-            return Database.InsertAsync<T>(model);
+            return CurConn.InsertAsync<T>(model);
         }
         #endregion
 
         #region +Modify
         public Task<bool> ModifyAsync<T>(T model) where T : class, new()
         {
-            return Database.UpdateAsync<T>(model);
+            return CurConn.UpdateAsync<T>(model);
         }
 
         public bool Modify<T>(T model) where T : class, new()
         {
-            return Database.Update<T>(model);
+            return CurConn.Update<T>(model);
         }
         #endregion
 
         #region +Remove
         public bool Remove<T>(T model) where T : class, new()
         {
-            return Database.Delete<T>(model);
+            return CurConn.Delete<T>(model);
         }
 
         public Task<bool> RemoveAsync<T>(T model) where T : class, new()
         {
-            return  Database.DeleteAsync<T>(model);
+            return CurConn.DeleteAsync<T>(model);
         }
         #endregion
 
         #region +Clear
         public Task<bool> ClearAsync<T>() where T : class, new()
         {
-            return Database.DeleteAllAsync<T>();
+            return CurConn.DeleteAllAsync<T>();
         }
 
         public bool Clear<T>() where T : class, new()
         {
-            return Database.DeleteAll<T>();
+            return CurConn.DeleteAll<T>();
         }
         #endregion
 
 
-        //public T QueryMuilt(string sql, object paramObj = null)
-        //{
-        //    using (var reader= Database.QueryMultiple(sql, paramObj))
-        //    {
+        #region +Muilt
 
-        //        reader.Read();
-        //    }
+        public Tuple<IEnumerable<T>, int> Page<T>(string countSql, string dataSql, object paramObj = null)
+        {
+            using (var muilt = CurConn.QueryMultiple(string.Format("{0};{1}", countSql, dataSql), paramObj))
+            {
+                int count = muilt.Read<int>().FirstOrDefault();
+                if (count <= 0) return new Tuple<IEnumerable<T>, int>(new List<T>(), 0);
 
-        //}
+                var data = muilt.Read<T>();
+                return new Tuple<IEnumerable<T>, int>(data, count);
+            }
+        }
+
+        public Tuple<IEnumerable<A>, IEnumerable<B>> Muilt<A, B>(string muilSql, object paramObj = null)
+        {
+            using (var muilt = CurConn.QueryMultiple(muilSql, paramObj))
+            {
+                var one = muilt.Read<A>();
+                var two = muilt.Read<B>();
+                return Tuple.Create<IEnumerable<A>, IEnumerable<B>>(one, two);
+            }
+        }
+        public Tuple<IEnumerable<A>, IEnumerable<B>, IEnumerable<C>> Muilt<A, B, C>(string muilSql, object paramObj = null)
+        {
+            using (var muilt = CurConn.QueryMultiple(muilSql, paramObj))
+            {
+                var one = muilt.Read<A>();
+                var two = muilt.Read<B>();
+                var three = muilt.Read<C>();
+                return Tuple.Create<IEnumerable<A>, IEnumerable<B>, IEnumerable<C>>(one, two, three);
+            }
+        }
+        public Tuple<IEnumerable<A>, IEnumerable<B>, IEnumerable<C>, IEnumerable<D>> Muilt<A, B, C,D>(string muilSql, object paramObj = null)
+        {
+            using (var muilt = CurConn.QueryMultiple(muilSql, paramObj))
+            {
+                var one = muilt.Read<A>();
+                var two = muilt.Read<B>();
+                var three = muilt.Read<C>();
+                var four = muilt.Read<D>();
+                return Tuple.Create<IEnumerable<A>, IEnumerable<B>, IEnumerable<C>, IEnumerable<D>>(one, two, three,four);
+            }
+        }
+
+        #endregion
 
 
         public void Dispose()
         {
             //销毁事务
-            if (_tran != null)
+            if (CurTran != null)
             {
-                _tran.Dispose();
-                _tran = null;
+                CurTran.Dispose();
+                CurTran = null;
             }
             //销毁连接
-            if (Database != null && Database.State == ConnectionState.Open)
+            if (CurConn != null && CurConn.State == ConnectionState.Open)
             {
-                Database.Dispose();
-                Database.Close();
-                Database = null;
+                CurConn.Dispose();
+                CurConn.Close();
+                CurConn = null;
 
             }
 

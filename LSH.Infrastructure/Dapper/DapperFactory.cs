@@ -4,7 +4,7 @@ using System.Text;
 
 namespace LSH.Infrastructure.Dapper
 {
-    public class DapperFactory
+    public sealed class DapperFactory
     {
 
         public DapperContext Create(string connStr, DatabaseType type = DatabaseType.Mysql)
