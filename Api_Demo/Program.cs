@@ -7,6 +7,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using NLog.Web;
 
 namespace WebApplication2
 {
@@ -15,6 +16,24 @@ namespace WebApplication2
         public static void Main(string[] args)
         {
             CreateWebHostBuilder(args).Build().Run();
+            ////// NLog: setup the logger first to catch all errors
+            ////var logger = NLog.Web.NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
+            //try
+            //{
+            //   // logger.Debug("init main");
+            //    CreateWebHostBuilder(args).Build().Run();
+            //}
+            //catch (Exception ex)
+            //{
+            //    //NLog: catch setup errors
+            //   // logger.Error(ex, "Stopped program because of exception");
+            //    throw;
+            //}
+            //finally
+            //{
+            //    // Ensure to flush and stop internal timers/threads before application-exit (Avoid segmentation fault on Linux)
+            //   // NLog.LogManager.Shutdown();
+            //}
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
@@ -24,6 +43,14 @@ namespace WebApplication2
                     var env = ctx.HostingEnvironment;
                     cnf.AddJsonFile("appsettings.json", true, true)
                        .AddJsonFile($"application_{env.EnvironmentName}.json", true, true);
-                });
+                }).
+                    ConfigureLogging(logging =>
+                    {
+                        logging.ClearProviders();
+                        logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
+                    }).
+            UseNLog();
+
+
     }
 }

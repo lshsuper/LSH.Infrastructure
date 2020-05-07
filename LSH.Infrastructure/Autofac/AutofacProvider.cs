@@ -1,4 +1,6 @@
 ﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,15 +16,16 @@ namespace LSH.Infrastructure.Autofac
 
         public static AutofacProvider Current { get; private set; }
 
-        private AutofacProvider()
+        private AutofacProvider(IServiceCollection services)
         {
             _builder = new ContainerBuilder();
-            _container = _builder.Build();
+            _builder.Populate(services);
         }
 
-        public static void Init()
+        public static void Init(IServiceCollection services)
         {
-            Current = new AutofacProvider();
+            Current = new AutofacProvider(services);
+
         }
 
 
@@ -30,7 +33,6 @@ namespace LSH.Infrastructure.Autofac
         {
             _builder.RegisterType<Source>().As<Dest>();
         }
-
 
         public Dest Resolver<Dest>()
         {
@@ -65,11 +67,25 @@ namespace LSH.Infrastructure.Autofac
                     if (type.IsDefined(typeof(RegisterAttribute)))
                     {
                         RegisterAttribute curType = type.GetCustomAttribute<RegisterAttribute>();
-                        _builder.RegisterType(type).As(curType.DestType);
+                        _builder.RegisterType(type).As(curType.DestType).PropertiesAutowired();
+                    }
+                    else if (type.Name.EndsWith("Controller"))
+                    {
+                       // _builder.RegisterType(type).AsSelf().PropertiesAutowired();
                     }
                 }
             }
 
+
+            _builder.RegisterAssemblyTypes(Assembly.Load("Api_Demo"));
+
+        }
+
+
+        public   IServiceProvider Build()
+        {
+            _container = _builder.Build();
+           return new AutofacServiceProvider(_container);
         }
 
     }

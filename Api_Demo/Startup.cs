@@ -2,10 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Api_Demo;
 using Api_Demo.Extensions;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using ConsoleApp53;
+using LSH.Infrastructure.Autofac;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -17,6 +22,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using NLog;
+using NLog.Extensions.Logging;
 
 namespace WebApplication2
 {
@@ -28,7 +35,7 @@ namespace WebApplication2
         }
 
         public IConfiguration Configuration { get; }
-        
+        public IContainer ApplicationContainer { get; private set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -64,11 +71,20 @@ namespace WebApplication2
             services.AddOptions();
             services.Configure<JWTSetting>(Configuration.GetSection("JWT"));
 
+         
+        
+            
+            //return AutofacProvider.Current.Build();
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            //builder.AddNLog();
+           // LogManager.LoadConfiguration("nlog.config");
+           
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
