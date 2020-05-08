@@ -14,7 +14,7 @@ namespace Console_Demo
         static void Main(string[] args)
         {
 
-            Console.WriteLine(TimeSpan.Zero);
+            Console.WriteLine(DateTime.Now.ToString("yyMMddHHmmssfff"));
             #region Quartz
             //QuartzNetContext _ctx = new QuartzNetContext();
 

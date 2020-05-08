@@ -1,44 +1,41 @@
 ﻿using NLog;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace LSH.Infrastructure
 {
   public  class LogHelper
     {
-        private static readonly Logger log = LogManager.GetLogger("errorLog");
-        public static void Error(object msg, Exception exp = null)
+        private static readonly Logger log = LogManager.GetCurrentClassLogger();
+        public static void Error(object msg, Exception ex = null)
         {
-            if (exp == null)
-                log.Error("#" + msg);
-            else
-                log.Error("#" + msg + "  " + exp.ToString());
+            //StringBuilder sb = new StringBuilder();
+            //sb.AppendLine("---日志记录开始----");
+            //sb.AppendLine(string.Format("[时间]:{0}",DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")));
+            //sb.AppendLine(string.Format("[级别]:{0}","Error"));
+            //sb.AppendLine(string.Format("[异常及信息]:{0}-{1}",msg,exp.ToString()));
+            log.Error(ex,msg.ToString());
         }
 
-        public static void Debug(object msg, Exception exp = null)
+        public static void Debug(object msg)
         {
-            if (exp == null)
-                log.Debug("#" + msg);
-            else
-                log.Debug("#" + msg + "  " + exp.ToString());
+            log.Debug(msg); 
         }
 
-        public static void Info(object msg, Exception exp = null)
+        public static void Info(object msg)
         {
-            if (exp == null)
-                log.Info("#" + msg);
-            else
-                log.Info("#" + msg + "  " + exp.ToString());
+
+            log.Info(msg);
+           
         }
 
 
-        public static void Warn(object msg, Exception exp = null)
+        public static void Warn(object msg)
         {
-            if (exp == null)
-                log.Warn("#" + msg);
-            else
-                log.Warn("#" + msg + "  " + exp.ToString());
+          
+            log.Warn(msg);
         }
 
     }

@@ -19,15 +19,18 @@ namespace Api_Demo.Controllers
         [HttpGet]
         public  string Get()
         {
+
             try
             {
-                 _userService.Get(1);
+                throw new NotImplementedException("未实现");
             }
             catch (Exception ex)
             {
-                LogHelper.Error("lsh");
-             
+
+                LogHelper.Error("lsh-error",ex);
             }
+           // LogHelper.Debug("lsh");
+        
             return null;
            // HttpContext.Authentication.SignInAsync("lsh",);
            
