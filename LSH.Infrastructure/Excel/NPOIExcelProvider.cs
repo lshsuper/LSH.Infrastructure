@@ -84,7 +84,9 @@ namespace LSH.Infrastructure
                     foreach (var cell in row.Cells)
                     {
                         ICell curCell = curRow.CreateCell(cellIndex, cell.Type);
-                        curCell.SetCellValue(cell.Value);
+                        HSSFRichTextString hSSF = new HSSFRichTextString();
+                        
+                        curCell.SetCellValue(hSSF);
                         if (cell.IsAutoWidth)
                         {
                             AutoWidth(curSheet, cellIndex);
@@ -92,6 +94,7 @@ namespace LSH.Infrastructure
                         if (cell.Style != null)
                         {
                             curCell.CellStyle = cell.Style;
+                            
                         }
                         cellIndex++;
                     }
@@ -118,7 +121,7 @@ namespace LSH.Infrastructure
                         rowIndex++;
                     }
 
-                    _book.CreateCellStyle();
+                  
 
 
                 }

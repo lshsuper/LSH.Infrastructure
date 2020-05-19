@@ -13,6 +13,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Console_Demo", "Console_Dem
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OAuth2.0", "OAuth2.0\OAuth2.0.csproj", "{8E67C724-4026-49A4-A294-5070BA5F7A04}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Console.XSocket", "Console.XSocket\Console.XSocket.csproj", "{1292B9D7-62D5-478D-978E-1AA933E4A3D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatApp", "ChatApp\ChatApp.csproj", "{C888190C-8C49-4740-A429-B77DF13D58B1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,14 @@ Global
 		{8E67C724-4026-49A4-A294-5070BA5F7A04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8E67C724-4026-49A4-A294-5070BA5F7A04}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8E67C724-4026-49A4-A294-5070BA5F7A04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1292B9D7-62D5-478D-978E-1AA933E4A3D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1292B9D7-62D5-478D-978E-1AA933E4A3D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1292B9D7-62D5-478D-978E-1AA933E4A3D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1292B9D7-62D5-478D-978E-1AA933E4A3D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C888190C-8C49-4740-A429-B77DF13D58B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C888190C-8C49-4740-A429-B77DF13D58B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C888190C-8C49-4740-A429-B77DF13D58B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C888190C-8C49-4740-A429-B77DF13D58B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

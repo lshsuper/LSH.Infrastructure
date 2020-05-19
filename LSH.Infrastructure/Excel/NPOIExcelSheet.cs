@@ -63,7 +63,11 @@ namespace LSH.Infrastructure
         public bool IsAutoWidth { get; set; }
 
         public ICellStyle Style { get; set; }
+
+        
     }
+
+
 
     public class NPOIExcelMergeRegion
     {

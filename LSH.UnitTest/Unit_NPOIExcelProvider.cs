@@ -87,6 +87,9 @@ namespace LSH.UnitTest
         {
             using (NPOIExcelProvider _proveder = new NPOIExcelProvider(NPOIExcelType.XLS))
             {
+
+                var style = _proveder.CreateCellStyle();
+               
                 _proveder.CreteSheet(new NPOIExcelSheet()
                 {
                     SheetName="sheet01",
@@ -99,11 +102,21 @@ namespace LSH.UnitTest
                           },
                            ExcelChartType=NPOIExcelChartType.Line,
                             MarginBottom=20,
-                             Title="晨读"
+                             Title="晨读",
+                             
 
                    },
 
                      }
+                    ,Rows=new List<NPOIExcelRow>() {
+                    
+                           new NPOIExcelRow(){ Cells=new List<NPOIExcelCell>(){
+                                new NPOIExcelCell(){
+                                    Style=
+                                }
+                           } }
+                    
+                    }
                 });
                 _proveder.Save("3", "c:\\lsh");
             }
