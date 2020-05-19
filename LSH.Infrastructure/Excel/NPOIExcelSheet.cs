@@ -43,9 +43,11 @@ namespace LSH.Infrastructure
         /// </summary>
         public List<NPOIExcelMergeRegion> Regions { get; set; }
 
-        public bool EnableRegion { get; set; }
-
         public int Height { get; set; }
+        /// <summary>
+        /// 距离下一行距离
+        /// </summary>
+        public  int MaginButton { get; set; }
 
     }
 
@@ -53,20 +55,43 @@ namespace LSH.Infrastructure
     {
         public NPOIExcelCell()
         {
-            IsAutoWidth = true;
-
+            RichTextSettings = new List<NPOIExcelCellRichTextSetting>();
+            Width = 0;
         }
         public dynamic Value { get; set; }
 
         public CellType Type { get; set; }
-
-        public bool IsAutoWidth { get; set; }
+        /// <summary>
+        /// 0->自适应,>0->具体值,<0->不设置
+        /// </summary>
+        public  int Width { get; set; }
 
         public ICellStyle Style { get; set; }
+
+        public List<NPOIExcelCellRichTextSetting> RichTextSettings { get; set; }
 
         
     }
 
+    /// <summary>
+    /// 富文本设置
+    /// </summary>
+    public  class NPOIExcelCellRichTextSetting
+    {
+        /// <summary>
+        /// 左边界(闭节点)
+        /// </summary>
+        public  int Start { get; set; }
+        /// <summary>
+        /// 右边界（开节点）
+        /// </summary>
+        public int End { get; set; }
+        /// <summary>
+        /// 指定字体
+        /// </summary>
+        public IFont Font { get; set; }
+
+    }
 
 
     public class NPOIExcelMergeRegion
