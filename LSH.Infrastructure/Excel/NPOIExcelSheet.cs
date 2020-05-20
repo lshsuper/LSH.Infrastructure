@@ -96,22 +96,20 @@ namespace LSH.Infrastructure
 
     public class NPOIExcelMergeRegion
     {
-        public int FirstRow { get; set; }
-        public int LastRow { get; set; }
-        public int FirstCol { get; set; }
 
-        public int LastCol { get; set; }
-
-    }
-
-    public class NPOIExcelCellStyle
-    {
         /// <summary>
-        /// 
+        /// 跨行数
         /// </summary>
-        public int Align { get; set; }
+        public int RowCount { get; set; }
+        /// <summary>
+        /// 起始索引
+        /// </summary>
+        public int StartCol { get; set; }
+        /// <summary>
+        /// 终止索引
+        /// </summary>
+        public int EndCol { get; set; }
 
-        public int VerticalAlign { get; set; }
     }
 
     public enum NPOIExcelType
