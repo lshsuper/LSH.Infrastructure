@@ -16,7 +16,7 @@ namespace LSH.Infrastructure
 {
     public class NPOIExcelProvider : IDisposable
     {
-        public IWorkbook _book { get; private set; }
+        private IWorkbook _book;
 
         public NPOIExcelType ExcelType { get; private set; }
 
@@ -25,7 +25,6 @@ namespace LSH.Infrastructure
         public NPOIExcelProvider(NPOIExcelType excelType)
         {
             if (_book != null) return;
-
 
             switch (excelType)
             {
@@ -41,7 +40,6 @@ namespace LSH.Infrastructure
             }
 
             ExcelType = excelType;
-
 
         }
         public NPOIExcelProvider(Stream stream, NPOIExcelType excelType)
