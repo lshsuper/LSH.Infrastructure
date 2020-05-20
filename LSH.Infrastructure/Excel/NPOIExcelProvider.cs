@@ -135,13 +135,19 @@ namespace LSH.Infrastructure
                     //合并单元格策略
                     if (row.Regions.Any())
                     {
-
+                        int maxRow = 0;
                         foreach (var region in row.Regions)
                         {
-                            curSheet.AddMergedRegion(new CellRangeAddress(rowIndex, rowIndex+region.RowCount,region.StartCol, region.EndCol));
-                            rowIndex +=region.RowCount+1;
+                            if (maxRow < rowIndex + region.RowCount-1) {
+                                maxRow = rowIndex + region.RowCount-1;
+                            }
+                            curSheet.AddMergedRegion(new CellRangeAddress(rowIndex, rowIndex+region.RowCount-1,region.StartCol, region.EndCol));
+                           
                         }
-                       
+
+                        rowIndex += maxRow + 1;
+
+
                     }
                     else
                     {

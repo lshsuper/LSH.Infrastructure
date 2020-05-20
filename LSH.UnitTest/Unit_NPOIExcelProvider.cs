@@ -107,7 +107,8 @@ namespace LSH.UnitTest
                     ,
                     Rows = new List<NPOIExcelRow>() {
 
-                           new NPOIExcelRow(){ Cells=new List<NPOIExcelCell>(){
+                           new NPOIExcelRow(){ 
+                               Cells=new List<NPOIExcelCell>(){
 
                                 new NPOIExcelCell(){
 
@@ -124,13 +125,31 @@ namespace LSH.UnitTest
 
                                          }
                                       },
-                                       Value="12\n3\n456\n7890"
-                                }
-                           } }
+                                       Value="dhsdhsdh\nsdhs\n\ndhdhd\nsdnnnueu"
+                                },
+                                
+                           },
+                               Regions=new List<NPOIExcelMergeRegion>(){
+                                            
+                                    new NPOIExcelMergeRegion(){
+                                         StartCol=0,
+                                          EndCol=2,
+                                          RowCount=5
+                                    },
+                                    new NPOIExcelMergeRegion(){
+                                         StartCol=3,
+                                         RowCount=3,
+                                         EndCol=6
+                                    
+                                    }
+                               
+                               }
+                           
+                           }
 
                     }
                 });
-                _proveder.Save("5", "c:\\lsh");
+                _proveder.Save("7", "d:\\lsh");
             }
 
         }
