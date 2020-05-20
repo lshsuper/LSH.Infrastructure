@@ -4,6 +4,7 @@ using NPOI.HSSF.Util;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
@@ -87,6 +88,12 @@ namespace LSH.UnitTest
         [TestMethod]
         public void CreateChart()
         {
+
+
+            Hashtable ht = Hashtable.Synchronized(new Hashtable());
+            
+            ArrayList al = new ArrayList();
+            HashSet<string> hs = new HashSet<string>();
             using (NPOIExcelProvider _proveder = new NPOIExcelProvider(NPOIExcelType.XLS))
             {
 
