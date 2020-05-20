@@ -26,6 +26,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LSH.Infrastructure\LSH.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Api_Demo.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -84,21 +84,56 @@ namespace LSH.Infrastructure
                     foreach (var cell in row.Cells)
                     {
                         ICell curCell = curRow.CreateCell(cellIndex, cell.Type);
-                        curCell.SetCellValue(cell.Value);
-                        if (cell.IsAutoWidth)
+
+                        //富文本设置
+                        if (cell.RichTextSettings != null)
                         {
-                            AutoWidth(curSheet, cellIndex);
+                            if (ExcelType == NPOIExcelType.XLSX)
+                            {
+                                HSSFRichTextString hSSF = new HSSFRichTextString(cell.Value);
+                                cell.RichTextSettings.ForEach(setting => { hSSF.ApplyFont(setting.Start, setting.End, setting.Font); });
+                                curCell.SetCellValue(hSSF);
+                            }
+                            else
+                            {
+                                XSSFRichTextString xSSF = new XSSFRichTextString(cell.Value);
+                                cell.RichTextSettings.ForEach(setting => { xSSF.ApplyFont(setting.Start, setting.End, setting.Font); });
+                                curCell.SetCellValue(xSSF);
+                            }
                         }
+                        else
+                        {
+                            curCell.SetCellValue(cell.Value);
+                        }
+
+                        //自动宽度
+                        if (cell.Width >= 0)
+                        {
+
+                            if (cell.Width == 0)
+                            {
+                                AutoWidth(curSheet, cellIndex);
+                            }
+                            else
+                            {
+                                curSheet.SetColumnWidth(cellIndex, (int)cell.Width * 256);
+                            }
+
+                        }
+
+
                         if (cell.Style != null)
                         {
                             curCell.CellStyle = cell.Style;
+
                         }
+
                         cellIndex++;
                     }
-                    curRow.Height =(short)Convert.ToInt32(row.Height * 20);
+                    curRow.Height = (short)Convert.ToInt32(row.Height * 20);
 
                     //合并单元格策略
-                    if (row.EnableRegion)
+                    if (row.Regions.Any())
                     {
                         int maxRow = 0;
                         foreach (var region in row.Regions)
@@ -115,10 +150,15 @@ namespace LSH.Infrastructure
                     }
                     else
                     {
+
                         rowIndex++;
                     }
 
-                    _book.CreateCellStyle();
+                    rowIndex += row.MaginButton;
+
+
+
+
 
 
                 }
@@ -210,7 +250,7 @@ namespace LSH.Infrastructure
             return _book.CreateFont();
         }
 
-        public  ICellStyle CreateCellStyle()
+        public ICellStyle CreateCellStyle()
         {
             return _book.CreateCellStyle();
         }
@@ -295,9 +335,9 @@ namespace LSH.Infrastructure
         }
 
 
-        public  void GetColor()
+        public void GetColor()
         {
-             
+
         }
 
 
