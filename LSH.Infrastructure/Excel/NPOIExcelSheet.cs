@@ -1,6 +1,8 @@
-﻿using NPOI.SS.UserModel;
+﻿using NPOI.HSSF.Util;
+using NPOI.SS.UserModel;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 
 namespace LSH.Infrastructure
@@ -47,7 +49,7 @@ namespace LSH.Infrastructure
         /// <summary>
         /// 距离下一行距离
         /// </summary>
-        public  int MaginButton { get; set; }
+        public int MaginButton { get; set; }
 
     }
 
@@ -64,24 +66,24 @@ namespace LSH.Infrastructure
         /// <summary>
         /// 0->自适应,>0->具体值,<0->不设置
         /// </summary>
-        public  int Width { get; set; }
+        public int Width { get; set; }
 
         public ICellStyle Style { get; set; }
 
         public List<NPOIExcelCellRichTextSetting> RichTextSettings { get; set; }
 
-        
+
     }
 
     /// <summary>
     /// 富文本设置
     /// </summary>
-    public  class NPOIExcelCellRichTextSetting
+    public class NPOIExcelCellRichTextSetting
     {
         /// <summary>
         /// 左边界(闭节点)
         /// </summary>
-        public  int Start { get; set; }
+        public int Start { get; set; }
         /// <summary>
         /// 右边界（开节点）
         /// </summary>
@@ -150,12 +152,15 @@ namespace LSH.Infrastructure
     }
 
 
-    public enum NPOIColorType
+
+    public class NPOIExcelHeaderAttribute:Attribute
     {
-        Red,
-        Yellow,
-        Green,
+        public string Name { get; set; }
+
+        public Type Type { get; set; }
 
     }
+
+
 
 }
