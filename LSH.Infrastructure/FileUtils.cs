@@ -26,7 +26,7 @@ namespace LSH.Infrastructure
                     {
                         foreach (var fileToZip in filePaths)
                         {
-                            //如果文件没有找到，则报错
+                            
                             if (!File.Exists(fileToZip))
                             {
                                 succCount--;

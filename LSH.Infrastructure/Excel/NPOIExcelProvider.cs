@@ -16,7 +16,7 @@ namespace LSH.Infrastructure
 {
     public class NPOIExcelProvider : IDisposable
     {
-        public IWorkbook _book { get; private set; }
+        private IWorkbook _book;
 
         public NPOIExcelType ExcelType { get; private set; }
 
@@ -25,7 +25,6 @@ namespace LSH.Infrastructure
         public NPOIExcelProvider(NPOIExcelType excelType)
         {
             if (_book != null) return;
-
 
             switch (excelType)
             {
@@ -41,7 +40,6 @@ namespace LSH.Infrastructure
             }
 
             ExcelType = excelType;
-
 
         }
         public NPOIExcelProvider(Stream stream, NPOIExcelType excelType)
@@ -137,14 +135,15 @@ namespace LSH.Infrastructure
                         int maxRow = 0;
                         foreach (var region in row.Regions)
                         {
-                            if (region.LastRow > maxRow)
-                            {
-                                maxRow = region.LastRow;
+                            if (maxRow < rowIndex + region.RowCount-1) {
+                                maxRow = rowIndex + region.RowCount-1;
                             }
-                            curSheet.AddMergedRegion(new CellRangeAddress(region.FirstRow, region.LastRow, region.FirstCol, region.LastCol));
-
+                            curSheet.AddMergedRegion(new CellRangeAddress(rowIndex, rowIndex+region.RowCount-1,region.StartCol, region.EndCol));
+                           
                         }
+
                         rowIndex += maxRow + 1;
+
 
                     }
                     else
@@ -154,11 +153,6 @@ namespace LSH.Infrastructure
                     }
 
                     rowIndex += row.MaginButton;
-
-
-
-
-
 
                 }
             }

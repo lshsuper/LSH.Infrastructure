@@ -4,6 +4,7 @@ using NPOI.HSSF.Util;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
@@ -87,6 +88,12 @@ namespace LSH.UnitTest
         [TestMethod]
         public void CreateChart()
         {
+
+
+            Hashtable ht = Hashtable.Synchronized(new Hashtable());
+            
+            ArrayList al = new ArrayList();
+            HashSet<string> hs = new HashSet<string>();
             using (NPOIExcelProvider _proveder = new NPOIExcelProvider(NPOIExcelType.XLS))
             {
 
@@ -100,6 +107,7 @@ namespace LSH.UnitTest
                 font02.Color = HSSFColor.Red.Index;
 
 
+
                 _proveder.CreteSheet(new NPOIExcelSheet()
                 {
                     SheetName = "sheet01"
@@ -109,7 +117,8 @@ namespace LSH.UnitTest
                     ,
                     Rows = new List<NPOIExcelRow>() {
 
-                           new NPOIExcelRow(){ Cells=new List<NPOIExcelCell>(){
+                           new NPOIExcelRow(){ 
+                               Cells=new List<NPOIExcelCell>(){
 
                                 new NPOIExcelCell(){
 
@@ -126,37 +135,31 @@ namespace LSH.UnitTest
 
                                          }
                                       },
-                                       Value="12\n3\n456\n7890"
+                                       Value="dhsdhsdh\nsdhs\n\ndhdhd\nsdnnnueu"
                                 },
-
-                           } ,
-                           MaginButton=20,
-                           Height=80
+                                
                            },
-                               new NPOIExcelRow(){ Cells=new List<NPOIExcelCell>(){
-
-                                new NPOIExcelCell(){
-
-                                      RichTextSettings=new List<NPOIExcelCellRichTextSetting>(){
-                                         new  NPOIExcelCellRichTextSetting(){
-                                              Start=0,
-                                              End=2,
-                                              Font=font
-                                         },
-                                         new NPOIExcelCellRichTextSetting(){
-                                                Start=3,
-                                                End=6,
-                                                Font=font02,
-
-                                         }
-                                      },
-                                       Value="12\n3\n456\n7890"
-                                }
-                           } }
+                               Regions=new List<NPOIExcelMergeRegion>(){
+                                            
+                                    new NPOIExcelMergeRegion(){
+                                         StartCol=0,
+                                          EndCol=2,
+                                          RowCount=5
+                                    },
+                                    new NPOIExcelMergeRegion(){
+                                         StartCol=3,
+                                         RowCount=3,
+                                         EndCol=6
+                                    
+                                    }
+                               
+                               }
+                           
+                           }
 
                     }
                 });
-                _proveder.Save("6", "c:\\lsh");
+                _proveder.Save("7", "d:\\lsh");
             }
 
         }
