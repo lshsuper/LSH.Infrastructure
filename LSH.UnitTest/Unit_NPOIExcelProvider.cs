@@ -90,76 +90,35 @@ namespace LSH.UnitTest
         {
 
 
-            Hashtable ht = Hashtable.Synchronized(new Hashtable());
-            
-            ArrayList al = new ArrayList();
-            HashSet<string> hs = new HashSet<string>();
+           
             using (NPOIExcelProvider _proveder = new NPOIExcelProvider(NPOIExcelType.XLS))
             {
 
-                // var style = _proveder.CreateCellStyle();
-                IFont font = _proveder.CreateFont();
 
-                font.Color = HSSFColor.Blue.Index;
-
-                IFont font02 = _proveder.CreateFont();
-
-                font02.Color = HSSFColor.Red.Index;
-
-
-
-                _proveder.CreteSheet(new NPOIExcelSheet()
+                for (int k = 0; k < 1; k++)
                 {
-                    SheetName = "sheet01"
-
-
-
-                    ,
-                    Rows = new List<NPOIExcelRow>() {
-
-                           new NPOIExcelRow(){ 
-                               Cells=new List<NPOIExcelCell>(){
-
-                                new NPOIExcelCell(){
-
-                                      RichTextSettings=new List<NPOIExcelCellRichTextSetting>(){
-                                         new  NPOIExcelCellRichTextSetting(){
-                                              Start=0,
-                                              End=2,
-                                              Font=font
-                                         },
-                                         new NPOIExcelCellRichTextSetting(){
-                                                Start=3,
-                                                End=6,
-                                                Font=font02,
-
-                                         }
-                                      },
-                                       Value="dhsdhsdh\nsdhs\n\ndhdhd\nsdnnnueu"
-                                },
-                                
-                           },
-                               Regions=new List<NPOIExcelMergeRegion>(){
-                                            
-                                    new NPOIExcelMergeRegion(){
-                                         StartCol=0,
-                                          EndCol=2,
-                                          RowCount=5
-                                    },
-                                    new NPOIExcelMergeRegion(){
-                                         StartCol=3,
-                                         RowCount=3,
-                                         EndCol=6
-                                    
-                                    }
-                               
-                               }
-                           
-                           }
-
+                    NPOIExcelSheet sheet = new NPOIExcelSheet() { SheetName = "lsh"+k };
+                    for (int i = 0; i < 10000; i++)
+                    {
+                        NPOIExcelRow row = new NPOIExcelRow();
+                        for (int j = 0; j < 20; j++)
+                        {
+                            row.Cells.Add(new NPOIExcelCell()
+                            {
+                                Value = Guid.NewGuid().ToString("N"),
+                                Type = CellType.String,
+                                Width = 0
+                            });
+                        }
+                        sheet.Rows.Add(row);
                     }
-                });
-                _proveder.Save("7", "d:\\lsh");
+
+                    _proveder.CreteSheet(sheet);
+                }
+            
+
+
+                _proveder.Save("111", "c:\\lsh");
             }
 
         }

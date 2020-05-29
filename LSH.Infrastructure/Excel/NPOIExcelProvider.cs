@@ -14,13 +14,20 @@ using System.Text;
 
 namespace LSH.Infrastructure
 {
+
+    /// <summary>
+    /// NPOI-Provider
+    /// </summary>
     public class NPOIExcelProvider : IDisposable
     {
+
+        #region +Private Attr
         private IWorkbook _book;
 
-        public NPOIExcelType ExcelType { get; private set; }
+        public NPOIExcelType ExcelType { get; private set; } 
+        #endregion
 
-        #region +初始化器
+        #region +Construct
 
         public NPOIExcelProvider(NPOIExcelType excelType)
         {
@@ -66,6 +73,12 @@ namespace LSH.Infrastructure
 
         #endregion
 
+        #region +Rich Utils
+        
+        /// <summary>
+        /// 构建一个Sheet
+        /// </summary>
+        /// <param name="sheet"></param>
         public void CreteSheet(NPOIExcelSheet sheet)
         {
 
@@ -79,12 +92,13 @@ namespace LSH.Infrastructure
                 {
                     IRow curRow = curSheet.CreateRow(rowIndex);
                     int cellIndex = 0;
+
                     foreach (var cell in row.Cells)
                     {
                         ICell curCell = curRow.CreateCell(cellIndex, cell.Type);
 
                         //富文本设置
-                        if (cell.RichTextSettings != null)
+                        if (cell.RichTextSettings != null && cell.RichTextSettings.Any())
                         {
                             if (ExcelType == NPOIExcelType.XLSX)
                             {
@@ -135,14 +149,15 @@ namespace LSH.Infrastructure
                         int maxRow = 0;
                         foreach (var region in row.Regions)
                         {
-                            if (maxRow < rowIndex + region.RowCount-1) {
-                                maxRow = rowIndex + region.RowCount-1;
+                            if (maxRow < rowIndex + region.RowCount - 1)
+                            {
+                                maxRow = rowIndex + region.RowCount - 1;
                             }
-                            curSheet.AddMergedRegion(new CellRangeAddress(rowIndex, rowIndex+region.RowCount-1,region.StartCol, region.EndCol));
-                           
+                            curSheet.AddMergedRegion(new CellRangeAddress(rowIndex, maxRow, region.StartCol, region.EndCol));
+
                         }
 
-                        rowIndex += maxRow + 1;
+                        rowIndex += maxRow > 0 ? maxRow : 1;
 
 
                     }
@@ -172,29 +187,100 @@ namespace LSH.Infrastructure
 
         }
 
-        public ICellStyle SimpleCellStyle()
+    
+        #endregion
+
+        #region +Simple Instance
+        public IFont CreateFont()
+        {
+            return _book.CreateFont();
+        }
+
+        public ICellStyle CreateCellStyle()
+        {
+            return _book.CreateCellStyle();
+        } 
+        #endregion
+
+        #region +Simple  Style
+
+        public ICellStyle SimpleContentStyle()
         {
             ICellStyle style = _book.CreateCellStyle();
             style.Alignment = HorizontalAlignment.Center;
             style.VerticalAlignment = VerticalAlignment.Center;
+            style.BorderBottom = BorderStyle.Thin;
+            style.BorderTop = BorderStyle.Thin;
+            style.BorderLeft = BorderStyle.Thin;
+            style.BorderRight = BorderStyle.Thin;
+            style.WrapText = true;
             IFont font = _book.CreateFont();
             font.FontName = "宋体";
             font.FontHeightInPoints = 12;
+
             style.SetFont(font);
             return style;
         }
 
-        /// <summary>
-        /// 生成文档
-        /// </summary>
-        public void Save(string fileName, string directory)
+        public ICellStyle SimpleTitleStyle()
         {
-            using (FileStream _fs = new FileStream($"{directory}\\{fileName}.{ExcelType.ToString().ToLower()}", FileMode.Create, FileAccess.Write))
-            {
-                _book.Write(_fs);
-            }
+            ICellStyle style = _book.CreateCellStyle();
+            style.Alignment = HorizontalAlignment.Center;
+            style.VerticalAlignment = VerticalAlignment.Center;
+            style.BorderBottom = BorderStyle.Thin;
+            style.BorderTop = BorderStyle.Thin;
+            style.BorderLeft = BorderStyle.Thin;
+            style.BorderRight = BorderStyle.Thin;
+
+            IFont font = _book.CreateFont();
+            font.FontName = "宋体";
+            font.FontHeightInPoints = 24;
+            font.IsBold = true;
+            style.SetFont(font);
+            return style;
         }
 
+
+        public ICellStyle SimpleReportTimeStyle()
+        {
+            ICellStyle style = _book.CreateCellStyle();
+            style.Alignment = HorizontalAlignment.Right;
+            style.VerticalAlignment = VerticalAlignment.Center;
+            style.BorderBottom = BorderStyle.Thin;
+            style.BorderTop = BorderStyle.Thin;
+            style.BorderLeft = BorderStyle.Thin;
+            style.BorderRight = BorderStyle.Thin;
+
+            IFont font = _book.CreateFont();
+            font.FontName = "宋体";
+            font.FontHeightInPoints = 12;
+
+            font.Color = HSSFColor.Grey25Percent.Index;
+            style.SetFont(font);
+            return style;
+        }
+        public ICellStyle SimpleHeaderStyle()
+        {
+            ICellStyle style = _book.CreateCellStyle();
+            style.Alignment = HorizontalAlignment.Center;
+            style.VerticalAlignment = VerticalAlignment.Center;
+            style.BorderBottom = BorderStyle.Thin;
+            style.BorderTop = BorderStyle.Thin;
+            style.BorderLeft = BorderStyle.Thin;
+            style.BorderRight = BorderStyle.Thin;
+
+            IFont font = _book.CreateFont();
+            font.FontName = "宋体";
+            font.FontHeightInPoints = 13;
+            font.IsBold = true;
+            style.SetFont(font);
+
+            return style;
+        }
+
+        #endregion
+
+        #region +Simple Reader
 
         public DataTable SimpleReaderAt(int sheetIndex = 0)
         {
@@ -238,15 +324,12 @@ namespace LSH.Infrastructure
             return ds;
         }
 
-        public IFont CreateFont()
-        {
-            return _book.CreateFont();
-        }
 
-        public ICellStyle CreateCellStyle()
-        {
-            return _book.CreateCellStyle();
-        }
+        #endregion
+
+        #region +Utils
+
+        #endregion
 
         /// <summary>
         /// 创建一个图表实例
@@ -317,7 +400,9 @@ namespace LSH.Infrastructure
                 sheet.SetColumnWidth(cellIndex, (length + 1) * 256);
             }
         }
-
+        /// <summary>
+        /// 对象回收
+        /// </summary>
         public void Dispose()
         {
 
@@ -327,7 +412,16 @@ namespace LSH.Infrastructure
             }
         }
 
-
+        /// <summary>
+        /// 生成文档
+        /// </summary>
+        public void Save(string fileName, string directory)
+        {
+            using (FileStream _fs = new FileStream($"{directory}\\{fileName}.{ExcelType.ToString().ToLower()}", FileMode.Create, FileAccess.Write))
+            {
+                _book.Write(_fs);
+            }
+        }
 
 
 
