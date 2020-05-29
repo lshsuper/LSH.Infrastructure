@@ -55,7 +55,7 @@ namespace LSH.Infrastructure
                     _book = new XSSFWorkbook(stream);
                     break;
                 case NPOIExcelType.XLSX:
-                    _book = new HSSFWorkbook();
+                    _book = new HSSFWorkbook(stream);
                     break;
                 default:
                     throw new Exception("excel文件类型不正确");
@@ -120,7 +120,6 @@ namespace LSH.Infrastructure
                             }
 
                         }
-
 
                         if (cell.Style != null)
                         {
@@ -335,10 +334,7 @@ namespace LSH.Infrastructure
         }
 
 
-        public void GetColor()
-        {
 
-        }
 
 
     }

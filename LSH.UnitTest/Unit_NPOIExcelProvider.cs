@@ -104,10 +104,36 @@ namespace LSH.UnitTest
                 {
                     SheetName = "sheet01"
 
+
+
                     ,
                     Rows = new List<NPOIExcelRow>() {
 
                            new NPOIExcelRow(){ Cells=new List<NPOIExcelCell>(){
+
+                                new NPOIExcelCell(){
+
+                                      RichTextSettings=new List<NPOIExcelCellRichTextSetting>(){
+                                         new  NPOIExcelCellRichTextSetting(){
+                                              Start=0,
+                                              End=2,
+                                              Font=font
+                                         },
+                                         new NPOIExcelCellRichTextSetting(){
+                                                Start=3,
+                                                End=6,
+                                                Font=font02,
+
+                                         }
+                                      },
+                                       Value="12\n3\n456\n7890"
+                                },
+
+                           } ,
+                           MaginButton=20,
+                           Height=80
+                           },
+                               new NPOIExcelRow(){ Cells=new List<NPOIExcelCell>(){
 
                                 new NPOIExcelCell(){
 
@@ -130,7 +156,7 @@ namespace LSH.UnitTest
 
                     }
                 });
-                _proveder.Save("5", "c:\\lsh");
+                _proveder.Save("6", "c:\\lsh");
             }
 
         }

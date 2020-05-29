@@ -151,4 +151,13 @@ namespace LSH.Infrastructure
 
     }
 
+
+    public enum NPOIColorType
+    {
+        Red,
+        Yellow,
+        Green,
+
+    }
+
 }
