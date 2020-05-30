@@ -23,7 +23,7 @@ namespace Api_Demo.Controllers
         public IActionResult Get()
         {
 
-            using (NPOIExcelProvider _proveder = new NPOIExcelProvider(NPOIExcelType.XLSX))
+            using (NPOIExcelProvider _proveder = new NPOIExcelProvider(NPOIExcelType.XLSX,true))
             {
 
                 //var contentStyle = _proveder.SimpleContentStyle();
@@ -32,7 +32,7 @@ namespace Api_Demo.Controllers
                 //var headerStyle = _proveder.SimpleHeaderStyle();
 
                 DataSet ds = new DataSet();
-                for (int k = 0; k < 1; k++)
+                for (int k = 0; k < 10; k++)
                 {
                     DataTable dt = new DataTable("lsh" + k);
 
@@ -130,10 +130,10 @@ namespace Api_Demo.Controllers
                 }
 
                 _proveder.SimpleWriter(ds);
-                _proveder.Save("111", "c:\\lsh");
+                _proveder.Save("c:\\lsh", "111");
             }
 
-            return File(System.IO.File.ReadAllBytes("c://lsh/111.xls"), "application/octet-stream", "1.xlsx");
+            return File(System.IO.File.ReadAllBytes("c://lsh/111.xlsx"), "application/octet-stream", "1.XLSX");
 
         }
 

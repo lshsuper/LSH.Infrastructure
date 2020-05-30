@@ -6,6 +6,7 @@ using NPOI.SS.Formula;
 using NPOI.SS.UserModel;
 using NPOI.SS.UserModel.Charts;
 using NPOI.SS.Util;
+using NPOI.XSSF.Streaming;
 using NPOI.XSSF.UserModel;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace LSH.Infrastructure
 {
@@ -29,32 +31,43 @@ namespace LSH.Infrastructure
         #region +Private Attr
         private IWorkbook _book;
 
-        public NPOIExcelType ExcelType { get; private set; }
+        private NPOIExcelType _excelType;
+
+      
         #endregion
 
         #region +Construct
 
-        public NPOIExcelProvider(NPOIExcelType excelType)
+        public NPOIExcelProvider(NPOIExcelType excelType,bool isBigGrid=false)
         {
             if (_book != null) return;
 
             switch (excelType)
             {
                 case NPOIExcelType.XLS:
-                    _book = new XSSFWorkbook();
+                    _book = new HSSFWorkbook();
                     break;
                 case NPOIExcelType.XLSX:
-                    _book = new HSSFWorkbook();
+                    if (isBigGrid) {
+                        _book = new SXSSFWorkbook();
+                    }
+                    else
+                    {
+                        _book = new XSSFWorkbook();
+                    }
+                   
                     break;
                 default:
                     throw new Exception("excel文件类型不正确");
 
             }
+            
+            _excelType = excelType;
 
-            ExcelType = excelType;
-
+         
+           
         }
-        public NPOIExcelProvider(Stream stream, NPOIExcelType excelType)
+        public NPOIExcelProvider(Stream stream, NPOIExcelType excelType,bool isBigGrid = false)
         {
             if (_book != null) return;
 
@@ -65,14 +78,20 @@ namespace LSH.Infrastructure
                     _book = new XSSFWorkbook(stream);
                     break;
                 case NPOIExcelType.XLSX:
-                    _book = new HSSFWorkbook(stream);
+                    if (isBigGrid)
+                    {
+                        _book = new SXSSFWorkbook();
+                    }
+                    else
+                    {
+                        _book = new XSSFWorkbook();
+                    }
                     break;
                 default:
                     throw new Exception("excel文件类型不正确");
 
             }
-            ExcelType = excelType;
-
+            _excelType = excelType;
 
         }
 
@@ -105,17 +124,18 @@ namespace LSH.Infrastructure
                         //富文本设置
                         if (cell.RichTextSettings != null && cell.RichTextSettings.Any())
                         {
-                            if (ExcelType == NPOIExcelType.XLSX)
-                            {
-                                HSSFRichTextString hSSF = new HSSFRichTextString(cell.Value);
-                                cell.RichTextSettings.ForEach(setting => { hSSF.ApplyFont(setting.Start, setting.End, setting.Font); });
-                                curCell.SetCellValue(hSSF);
-                            }
-                            else
+                            if (_excelType == NPOIExcelType.XLSX)
                             {
                                 XSSFRichTextString xSSF = new XSSFRichTextString(cell.Value);
                                 cell.RichTextSettings.ForEach(setting => { xSSF.ApplyFont(setting.Start, setting.End, setting.Font); });
                                 curCell.SetCellValue(xSSF);
+                            }
+                            else
+                            {
+                                HSSFRichTextString hSSF = new HSSFRichTextString(cell.Value);
+                                cell.RichTextSettings.ForEach(setting => { hSSF.ApplyFont(setting.Start, setting.End, setting.Font); });
+                                curCell.SetCellValue(hSSF);
+
                             }
                         }
                         else
@@ -189,6 +209,8 @@ namespace LSH.Infrastructure
                 }
 
             }
+
+
 
         }
 
@@ -305,11 +327,13 @@ namespace LSH.Infrastructure
         public void SimpleWriter(DataTable dt)
         {
 
+            
+
             var sheet = _book.CreateSheet(dt.TableName);
             int rowIndex = 0;
             //填充Header
             var header = sheet.CreateRow(0);
-            header.Height = 10 * 20;
+            header.Height = 20 * 20;
             //var titleStyle = SimpleStyle(true,false,20);
             var headerStyle = SimpleStyle(true, false, 10);
             var contentStyle = SimpleStyle(false, false, 10);
@@ -326,7 +350,7 @@ namespace LSH.Infrastructure
             foreach (DataRow row in dt.Rows)
             {
                 var curRow = sheet.CreateRow(rowIndex);
-                curRow.Height = 10 * 20;
+                curRow.Height = 20* 20;
                 for (int i = 0; i < dt.Columns.Count; i++)
                 {
                     var curHeader = dt.Columns[i];
@@ -413,7 +437,7 @@ namespace LSH.Infrastructure
 
                 var curAttr = prop.GetCustomAttribute<NPOIExcelHeaderAttribute>();
                 dt.Columns.Add(new DataColumn(curAttr.Name, curAttr.Type));
-                
+
             }
 
             foreach (T o in list)
@@ -423,7 +447,7 @@ namespace LSH.Infrastructure
                 {
                     var curColumn = dt.Columns[i];
 
-                    var val=typeof(T).GetProperty(curColumn.ColumnName).GetValue(o);
+                    var val = typeof(T).GetProperty(curColumn.ColumnName).GetValue(o);
 
                     row[curColumn.ColumnName] = val;
                 }
@@ -444,7 +468,7 @@ namespace LSH.Infrastructure
         /// <param name="sheet"></param>
         private void CreateChart(NPOIExcelChart excelChart, ISheet sheet, int startRow, int endRow)
         {
-            if (ExcelType != NPOIExcelType.XLS) throw new NotImplementedException("只支持.xls文件作图");
+            if (_excelType != NPOIExcelType.XLS) throw new NotImplementedException("只支持.xls文件作图");
 
             IDrawing drawing = sheet.CreateDrawingPatriarch();
             IClientAnchor anchor = drawing.CreateAnchor(0, 0, 0, 0, 0, startRow, excelChart.Axis.Count, endRow);
@@ -509,27 +533,48 @@ namespace LSH.Infrastructure
         /// <summary>
         /// 对象回收
         /// </summary>
+       
+        
         public void Dispose()
         {
-
-            if (_book != null)
+            try
             {
-                _book.Close();
+                if (_book != null)
+                {
+                    _book.Close();
+                }
+
+               
             }
+            catch (Exception)
+            {
+
+               
+            }
+
         }
 
         /// <summary>
         /// 生成文档
         /// </summary>
-        public void Save(string fileName, string directory)
+        public string Save(string dir,string fileName)
         {
-            using (FileStream _fs = new FileStream($"{directory}\\{fileName}.{ExcelType.ToString().ToLower()}", FileMode.Create, FileAccess.Write))
+
+
+            string path = $"{dir}\\{fileName}.{_excelType.ToString().ToLower()}";
+
+            using (var _fs= new FileStream(path,FileMode.Create, FileAccess.Write))
             {
                 _book.Write(_fs);
             }
+
+
+            return path;
+            
         }
-
-
-
     }
+
+
+
+
 }
