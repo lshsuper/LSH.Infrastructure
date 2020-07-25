@@ -33,14 +33,16 @@ namespace LSH.Infrastructure
 
         private NPOIExcelType _excelType;
 
-      
+
         #endregion
 
         #region +Construct
-
-        public NPOIExcelProvider(NPOIExcelType excelType,bool isBigGrid=false)
+        //启用大数据表格时，文字富文本将不好用
+        public NPOIExcelProvider(NPOIExcelType excelType, bool isBigGrid = false)
         {
             if (_book != null) return;
+
+
 
             switch (excelType)
             {
@@ -48,26 +50,28 @@ namespace LSH.Infrastructure
                     _book = new HSSFWorkbook();
                     break;
                 case NPOIExcelType.XLSX:
-                    if (isBigGrid) {
+                    if (isBigGrid)
+                    {
                         _book = new SXSSFWorkbook();
                     }
                     else
                     {
                         _book = new XSSFWorkbook();
                     }
-                   
+
                     break;
                 default:
                     throw new Exception("excel文件类型不正确");
 
             }
-            
+
             _excelType = excelType;
 
-         
-           
+
+
         }
-        public NPOIExcelProvider(Stream stream, NPOIExcelType excelType,bool isBigGrid = false)
+        //启用大数据表格时，文字富文本将不好用
+        public NPOIExcelProvider(Stream stream, NPOIExcelType excelType, bool isBigGrid = false)
         {
             if (_book != null) return;
 
@@ -115,17 +119,26 @@ namespace LSH.Infrastructure
                 foreach (var row in sheet.Rows)
                 {
                     IRow curRow = curSheet.CreateRow(rowIndex);
+
                     int cellIndex = 0;
 
                     foreach (var cell in row.Cells)
                     {
                         ICell curCell = curRow.CreateCell(cellIndex, cell.Type);
+                        cell.Value = cell.Value ?? "";
 
+                        if (cell.Style != null)
+                        {
+                            curCell.CellStyle = cell.Style;
+
+                        }
                         //富文本设置
                         if (cell.RichTextSettings != null && cell.RichTextSettings.Any())
                         {
                             if (_excelType == NPOIExcelType.XLSX)
                             {
+                                //SXSSFWorkbook
+
                                 XSSFRichTextString xSSF = new XSSFRichTextString(cell.Value);
                                 cell.RichTextSettings.ForEach(setting => { xSSF.ApplyFont(setting.Start, setting.End, setting.Font); });
                                 curCell.SetCellValue(xSSF);
@@ -158,11 +171,6 @@ namespace LSH.Infrastructure
 
                         }
 
-                        if (cell.Style != null)
-                        {
-                            curCell.CellStyle = cell.Style;
-
-                        }
 
                         cellIndex++;
                     }
@@ -174,23 +182,19 @@ namespace LSH.Infrastructure
                         int maxRow = 0;
                         foreach (var region in row.Regions)
                         {
-                            if (maxRow < rowIndex + region.RowCount - 1)
-                            {
-                                maxRow = rowIndex + region.RowCount - 1;
-                            }
-                            curSheet.AddMergedRegion(new CellRangeAddress(rowIndex, maxRow, region.StartCol, region.EndCol));
+                            //if (maxRow < rowIndex + region.RowCount - 1)
+                            //{
+                            //    maxRow = rowIndex + region.RowCount - 1;
+                            //}
+                            curSheet.AddMergedRegion(new CellRangeAddress(rowIndex, rowIndex + region.RowCount - 1, region.StartCol, region.EndCol));
 
                         }
 
-                        rowIndex += maxRow > 0 ? maxRow : 1;
+                        // rowIndex += maxRow > 0 ? maxRow : 1;
 
 
                     }
-                    else
-                    {
-
-                        rowIndex++;
-                    }
+                    rowIndex++;
 
                     rowIndex += row.MaginButton;
 
@@ -231,14 +235,23 @@ namespace LSH.Infrastructure
 
         #region +Simple  Style
 
-
-
-
-        public ICellStyle SimpleStyle(bool isBold, bool isShowBorder, int fontSize, short fontColor = -1)
+        /// <summary>
+        /// 简单样式构造
+        /// </summary>
+        /// <param name="isBold"></param>
+        /// <param name="isShowBorder"></param>
+        /// <param name="fontSize"></param>
+        /// <param name="fontColor"></param>
+        /// <param name="bgColor"></param>
+        /// <param name="align"></param>
+        /// <param name="valian"></param>
+        /// <returns></returns>
+        public ICellStyle SimpleStyle(bool isBold, bool isShowBorder, int fontSize, short fontColor = -1, short bgColor = -1, string fontName = "微软雅黑",
+               HorizontalAlignment align = HorizontalAlignment.Center, VerticalAlignment valian = VerticalAlignment.Center)
         {
             ICellStyle style = _book.CreateCellStyle();
-            style.Alignment = HorizontalAlignment.Center;
-            style.VerticalAlignment = VerticalAlignment.Center;
+            style.Alignment = align;
+            style.VerticalAlignment = valian;
             if (isShowBorder)
             {
                 style.BorderBottom = BorderStyle.Thin;
@@ -254,21 +267,39 @@ namespace LSH.Infrastructure
                 style.BorderRight = BorderStyle.None;
             }
             style.WrapText = true;
-            IFont font = _book.CreateFont();
-
-            font.FontName = "微软雅黑";
-            font.FontHeightInPoints = fontSize;
-            font.IsBold = isBold;
-            if (fontColor > 0)
+            if (!string.IsNullOrEmpty(fontName))
             {
-                font.Color = fontColor;
+                IFont font = _book.CreateFont();
+
+                font.FontName = "微软雅黑";
+                font.FontHeightInPoints = fontSize;
+                font.IsBold = isBold;
+                if (fontColor > 0)
+                {
+                    font.Color = fontColor;
+                }
+                if (bgColor > 0)
+                {
+
+                    style.FillForegroundColor = bgColor;
+                    style.FillPattern = FillPattern.SolidForeground;
+
+                }
+                style.SetFont(font);
             }
-            style.SetFont(font);
             return style;
         }
 
 
-
+        public IFont SimpleFont(bool isBold, int fontSize = 0, short fontColor = -1)
+        {
+            IFont font = _book.CreateFont();
+            font.FontName = "微软雅黑";
+            font.IsBold = isBold;
+            if (fontSize > 0) font.FontHeightInPoints = fontSize;
+            if (fontColor > 0) font.Color = fontColor;
+            return font;
+        }
         #endregion
 
         #region +Simple Reader
@@ -327,7 +358,7 @@ namespace LSH.Infrastructure
         public void SimpleWriter(DataTable dt)
         {
 
-            
+
 
             var sheet = _book.CreateSheet(dt.TableName);
             int rowIndex = 0;
@@ -350,7 +381,7 @@ namespace LSH.Infrastructure
             foreach (DataRow row in dt.Rows)
             {
                 var curRow = sheet.CreateRow(rowIndex);
-                curRow.Height = 20* 20;
+                curRow.Height = 20 * 20;
                 for (int i = 0; i < dt.Columns.Count; i++)
                 {
                     var curHeader = dt.Columns[i];
@@ -473,7 +504,7 @@ namespace LSH.Infrastructure
             IDrawing drawing = sheet.CreateDrawingPatriarch();
             IClientAnchor anchor = drawing.CreateAnchor(0, 0, 0, 0, 0, startRow, excelChart.Axis.Count, endRow);
             XSSFChart chart = drawing.CreateChart(anchor) as XSSFChart;
-            chart.SetTitle(excelChart.Title);
+            chart.Title.String = excelChart.Title;
 
             IChartLegend legend = chart.GetOrCreateLegend();
             legend.Position = LegendPosition.TopRight;
@@ -533,8 +564,8 @@ namespace LSH.Infrastructure
         /// <summary>
         /// 对象回收
         /// </summary>
-       
-        
+
+
         public void Dispose()
         {
             try
@@ -543,13 +574,11 @@ namespace LSH.Infrastructure
                 {
                     _book.Close();
                 }
-
-               
             }
             catch (Exception)
             {
 
-               
+
             }
 
         }
@@ -557,22 +586,42 @@ namespace LSH.Infrastructure
         /// <summary>
         /// 生成文档
         /// </summary>
-        public string Save(string dir,string fileName)
+        public string Save(string dir, string fileName)
         {
 
 
             string path = $"{dir}\\{fileName}.{_excelType.ToString().ToLower()}";
 
-            using (var _fs= new FileStream(path,FileMode.Create, FileAccess.Write))
+            using (var _fs = new FileStream(path, FileMode.Create, FileAccess.Write))
             {
                 _book.Write(_fs);
             }
 
 
             return path;
-            
+
+        }
+
+        /// <summary>
+        /// 生成文档
+        /// </summary>
+        public void Save(string path)
+        {
+
+
+            //string path = $"{dir}\\{fileName}.{_excelType.ToString().ToLower()}";
+
+            using (var _fs = new FileStream(path, FileMode.Create, FileAccess.Write))
+            {
+                _book.Write(_fs);
+            }
+
+
+
+
         }
     }
+
 
 
 
