@@ -7,18 +7,6 @@ namespace LSH.Infrastructure
 {
 
 
-    /*
-     lt （less than）               小于
-le （less than or equal to）   小于等于
-eq （equal to）                等于
-ne （not equal to）            不等于
-ge （greater than or equal to）大于等于
-gt （greater than）            大于
-————————————————
-版权声明：本文为CSDN博主「是逍遥呀呀呀呀」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
-原文链接：https://blog.csdn.net/weixin_38092213/java/article/details/85315538
-         
-         */
     public class ConditionOption
     {
 

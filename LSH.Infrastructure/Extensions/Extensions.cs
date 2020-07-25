@@ -65,7 +65,7 @@ namespace LSH.Infrastructure.Extensions
         /// <param name="input"></param>
         /// <param name="keywords"></param>
         /// <returns></returns>
-        public static bool Exist(this string input,params string[] keywords)
+        public static bool Exist(this string input, params string[] keywords)
         {
             StringBuilder pattern = new StringBuilder($@"^.*");
             for (int i = 0; i < keywords.Length; i++)
@@ -82,7 +82,7 @@ namespace LSH.Infrastructure.Extensions
             pattern.Append(".*$");
             return Regex.IsMatch(input, pattern.ToString());
         }
-       
+
 
         public static IList<T> ToList<T>(this string json)
         {
@@ -94,11 +94,11 @@ namespace LSH.Infrastructure.Extensions
             {
                 return default(List<T>);
             }
-            
+
         }
 
 
-        public  static  T ToObject<T>(this string json)
+        public static T ToObject<T>(this string json)
         {
             try
             {
@@ -160,12 +160,143 @@ namespace LSH.Infrastructure.Extensions
 
         public static string ToFirstUpper(this string pinyin)
         {
-            return pinyin.Substring(0, 1).ToUpper() + pinyin.Substring(1); 
+            return pinyin.Substring(0, 1).ToUpper() + pinyin.Substring(1);
         }
 
 
-     
-       
+        /// <summary>
+        /// foreach带索引的扩展（索引位从1开始）
+        /// </summary>
+        /// <typeparam name="T">当前元素</typeparam>
+        /// <param name="list">集合</param>
+        /// <param name="action">lambda执行体</param>
+        public static void ForEach<T>(this IEnumerable<T> list, Action<T, int> action)
+        {
+            int index = 0;
+            foreach (var item in list)
+            {
+                index++;
+                action(item, index);
+
+            }
+        }
+
+        /// <summary>
+        /// 扩展Max（支持非空判断）
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="V"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="selector"></param>
+        /// <param name="ignoreEmpty"></param>
+        /// <returns></returns>
+        public static V Max<T, V>(this IEnumerable<T> source, Func<T, V> selector, bool ignoreEmpty)
+        {
+            if (ignoreEmpty)
+            {
+                if (source == null || !source.Any()) return default(V);
+                return source.Max(selector);
+            }
+            return source.Max(selector);
+
+        }
+        /// <summary>
+        /// 扩展Min（支持非空判断）
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="V"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="selector"></param>
+        /// <param name="ignoreEmpty"></param>
+        /// <returns></returns>
+        public static V Min<T, V>(this IEnumerable<T> source, Func<T, V> selector, bool ignoreEmpty)
+        {
+            if (ignoreEmpty)
+            {
+                if (source == null || !source.Any()) return default(V);
+                return source.Min(selector);
+            }
+            return source.Min(selector);
+
+        }
+        /// <summary>
+        /// 扩展Average（支持非空判断）
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="selector"></param>
+        /// <param name="ignoreEmpty"></param>
+        /// <returns></returns>
+        public static double Average<T>(this IEnumerable<T> source, Func<T, double> selector, bool ignoreEmpty)
+        {
+            if (ignoreEmpty)
+            {
+                if (source == null || !source.Any()) return 0;
+                return source.Average(selector);
+            }
+            return source.Average(selector);
+
+        }
+        /// <summary>
+        /// 扩展Average（支持非空判断）
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="selector"></param>
+        /// <param name="ignoreEmpty"></param>
+        /// <returns></returns>
+        public static decimal Average<T>(this IEnumerable<T> source, Func<T, decimal> selector, bool ignoreEmpty)
+        {
+            if (ignoreEmpty)
+            {
+                if (source == null || !source.Any()) return 0;
+                return source.Average(selector);
+            }
+            return source.Average(selector);
+
+        }
+
+        /// <summary>
+        /// 百分比/比率计算
+        /// </summary>
+        /// <param name="element">分子</param>
+        /// <param name="denominator">分母</param>
+        /// <param name="digit">保留小数位</param>
+        /// <returns></returns>
+        public static decimal Rate(this int element, int denominator, int digit, bool isPercent = true)
+        {
+            if (denominator <= 0) return 0;
+            if (isPercent)
+                return Math.Round(((decimal)element / denominator) * 100, digit, MidpointRounding.AwayFromZero);
+            else
+                return Math.Round(((decimal)element / denominator), digit, MidpointRounding.AwayFromZero);
+        }
+        /// <summary>
+        /// 百分比/比率计算
+        /// </summary>
+        /// <param name="element">分子</param>
+        /// <param name="denominator">分母</param>
+        /// <param name="digit">保留小数位</param>
+        /// <returns></returns>
+        public static decimal Rate(this decimal element, decimal denominator, int digit, bool isPercent = true)
+        {
+            if (denominator <= 0) return 0;
+            if (isPercent)
+                return Math.Round(((decimal)element / denominator) * 100, digit, MidpointRounding.AwayFromZero);
+            else
+                return Math.Round(((decimal)element / denominator), digit, MidpointRounding.AwayFromZero);
+        }
+        /// <summary>
+        /// 保留小数点
+        /// </summary>
+        /// <param name="val"></param>
+        /// <param name="digit"></param>
+        /// <returns></returns>
+        public static decimal ToFixed(this decimal val, int digit)
+        {
+            return Math.Round(val, digit, MidpointRounding.AwayFromZero);
+        }
+
 
     }
 }
